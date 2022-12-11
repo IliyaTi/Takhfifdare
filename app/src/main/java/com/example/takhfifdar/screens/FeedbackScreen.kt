@@ -1,5 +1,6 @@
 package com.example.takhfifdar.screens
 
+import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
@@ -9,77 +10,65 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateListOf
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
-import androidx.navigation.NavController
 import com.example.takhfifdar.R
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.classes.RatingItem
+import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
+import kotlinx.coroutines.launch
+import org.json.JSONObject
 
 @Composable
-fun FeedbackScreen(navController: NavController) {
+fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
+
+    var vendorId by remember { mutableStateOf(0) }
+    var vendorName by remember { mutableStateOf("") }
+
+    LaunchedEffect(key1 = true) {
+        val vendorObj = JSONObject(vendor)
+        vendorId = vendorObj.getInt("id")
+        vendorName = vendorObj.getString("username")
+    }
+
+    val scope = rememberCoroutineScope()
+    val context = LocalContext.current
 
     BackHandler {
-        navController.navigate("HomeScreen") {
-            popUpTo("SplashScreen") {
-                inclusive = true
-            }
-        }
+        Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
     }
 
-    val selectedTab = remember { mutableStateOf(1) }
-
-    val posFeedBack = remember {
-        mutableStateListOf(
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-        )
-    }
-    val negFeedBack = remember {
-        mutableStateListOf(
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false,
-            false
-        )
-    }
-
-    val selectedRate = remember {
-        mutableStateOf(0)
-    }
 
     val wholeSet = ConstraintSet {
         val logo = createRefFor("logo")
         val vendorName = createRefFor("name")
         val rating = createRefFor("rating")
         val tabs = createRefFor("tabs")
+        val close = createRefFor("close")
+
+        constrain(close) {
+            top.linkTo(parent.top, margin = 16.dp)
+            end.linkTo(parent.end, margin = 16.dp)
+        }
 
         constrain(logo) {
             top.linkTo(parent.top)
@@ -134,8 +123,13 @@ fun FeedbackScreen(navController: NavController) {
 
     }
 
-
+//    if (!viewModel.qrScannerError.value)
     ConstraintLayout(wholeSet, modifier = Modifier.fillMaxSize()) {
+
+        IconButton(onClick = { Navigator.navigateTo(NavTarget.HomeScreen) }, modifier = Modifier.layoutId("close")) {
+            Icon(imageVector = Icons.Default.Close, contentDescription = "")
+        }
+
         Image(
             painter = painterResource(id = R.drawable.logo),
             contentDescription = "logo",
@@ -144,7 +138,7 @@ fun FeedbackScreen(navController: NavController) {
                 .size(150.dp)
         )
         Text(
-            text = "نام فروشگاه",
+            text = vendorName,
             fontSize = 36.sp, fontWeight = FontWeight.Bold,
             modifier = Modifier
                 .layoutId("name")
@@ -161,12 +155,12 @@ fun FeedbackScreen(navController: NavController) {
                 Image(
                     painter = painterResource(ratingOptions[i - 1].imgRes),
                     contentDescription = "",
-                    colorFilter = ColorFilter.tint(if (selectedRate.value == i) ratingOptions[i - 1].color else Color.Gray),
+                    colorFilter = ColorFilter.tint(if (viewModel.selectedRate.value == i) ratingOptions[i - 1].color else Color.Gray),
                     modifier = Modifier
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
-                        ) { selectedRate.value = i }
+                        ) { viewModel.selectedRate.value = i }
                         .size(48.dp)
                 )
             }
@@ -179,10 +173,10 @@ fun FeedbackScreen(navController: NavController) {
                     .layoutId("tabs"),
             ) {
                 OutlinedButton(
-                    onClick = { selectedTab.value = 1 },
+                    onClick = { viewModel.selectedTab.value = 1 },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (selectedTab.value == 1) Color(
+                        backgroundColor = if (viewModel.selectedTab.value == 1) Color(
                             0xffE5E5E5
                         ) else Color(0xffF2F2F2)
                     ),
@@ -193,10 +187,10 @@ fun FeedbackScreen(navController: NavController) {
                     Text(text = "نظرات منفی", fontSize = 24.sp)
                 }
                 OutlinedButton(
-                    onClick = { selectedTab.value = 2; },
+                    onClick = { viewModel.selectedTab.value = 2; },
                     modifier = Modifier.weight(1f),
                     colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (selectedTab.value == 1) Color(
+                        backgroundColor = if (viewModel.selectedTab.value == 1) Color(
                             0xffF2F2F2
                         ) else Color(0xffE5E5E5)
                     ),
@@ -207,7 +201,7 @@ fun FeedbackScreen(navController: NavController) {
                     Text(text = "نظرات مثبت", fontSize = 24.sp)
                 }
             }
-            if (selectedTab.value == 1)
+            if (viewModel.selectedTab.value == 1)
             /** Negative feedback page : START **/
                 Box(
                     modifier = Modifier
@@ -222,16 +216,16 @@ fun FeedbackScreen(navController: NavController) {
                     ) {
                         Column(
                             verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                            horizontalAlignment = Alignment.End,
                             modifier = Modifier.weight(1f)
                         ) {
-                            for (i in 0..4) {
+                            for (i in 0..2) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Center,
+                                    horizontalArrangement = Arrangement.End,
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(6.dp)
                                 ) {
-                                    Text(text = "رفتار غیر محترمانه", fontSize = 18.sp)
+                                    Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Checkbox(
                                         colors = CheckboxDefaults.colors(
@@ -239,8 +233,13 @@ fun FeedbackScreen(navController: NavController) {
                                                 0xff009245
                                             )
                                         ),
-                                        checked = negFeedBack[i],
-                                        onCheckedChange = { negFeedBack[i] = !negFeedBack[i] },
+                                        checked = viewModel.negFeedBack[i].second,
+                                        onCheckedChange = {
+                                            viewModel.negFeedBack[i] = Pair(
+                                                viewModel.negFeedBack[i].first,
+                                                !viewModel.negFeedBack[i].second
+                                            )
+                                        },
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -248,25 +247,32 @@ fun FeedbackScreen(navController: NavController) {
                         }
                         Column(
                             verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.weight(1f)
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 6.dp)
                         ) {
-                            for (i in 5..9) {
+                            for (i in 3..5) {
                                 Row(
-                                    horizontalArrangement = Arrangement.Center,
+                                    horizontalArrangement = Arrangement.End,
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(6.dp)
                                 ) {
-                                    Text(text = "رفتار غیر محترمانه", fontSize = 18.sp)
+                                    Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Checkbox(
-                                        checked = negFeedBack[i],
+                                        checked = viewModel.negFeedBack[i].second,
                                         colors = CheckboxDefaults.colors(
                                             checkedColor = Color(
                                                 0xff009245
                                             )
                                         ),
-                                        onCheckedChange = { negFeedBack[i] = !negFeedBack[i] },
+                                        onCheckedChange = {
+                                            viewModel.negFeedBack[i] = Pair(
+                                                viewModel.negFeedBack[i].first,
+                                                !viewModel.negFeedBack[i].second
+                                            )
+                                        },
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -290,25 +296,30 @@ fun FeedbackScreen(navController: NavController) {
                     ) {
                         Column(
                             verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
+                            horizontalAlignment = Alignment.End,
                             modifier = Modifier.weight(1f)
                         ) {
-                            for (i in 0..4) {
+                            for (i in 0..3) {
                                 Row(
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(6.dp)
                                 ) {
-                                    Text(text = "رفتار محترمانه", fontSize = 18.sp)
+                                    Text(text = viewModel.posFeedBack[i].first, fontSize = 14.sp)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Checkbox(
-                                        checked = posFeedBack[i],
+                                        checked = viewModel.posFeedBack[i].second,
                                         colors = CheckboxDefaults.colors(
                                             checkedColor = Color(
                                                 0xff009245
                                             )
                                         ),
-                                        onCheckedChange = { posFeedBack[i] = !posFeedBack[i] },
+                                        onCheckedChange = {
+                                            viewModel.posFeedBack[i] = Pair(
+                                                viewModel.posFeedBack[i].first,
+                                                !viewModel.posFeedBack[i].second
+                                            )
+                                        },
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -316,25 +327,32 @@ fun FeedbackScreen(navController: NavController) {
                         }
                         Column(
                             verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.weight(1f)
+                            horizontalAlignment = Alignment.End,
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(end = 6.dp)
                         ) {
-                            for (i in 5..9) {
+                            for (i in 4..7) {
                                 Row(
                                     horizontalArrangement = Arrangement.Center,
                                     verticalAlignment = Alignment.CenterVertically,
                                     modifier = Modifier.padding(6.dp)
                                 ) {
-                                    Text(text = "رفتار محترمانه", fontSize = 18.sp)
+                                    Text(text = viewModel.posFeedBack[i].first, fontSize = 14.sp)
                                     Spacer(modifier = Modifier.width(12.dp))
                                     Checkbox(
-                                        checked = posFeedBack[i],
+                                        checked = viewModel.posFeedBack[i].second,
                                         colors = CheckboxDefaults.colors(
                                             checkedColor = Color(
                                                 0xff009245
                                             )
                                         ),
-                                        onCheckedChange = { posFeedBack[i] = !posFeedBack[i] },
+                                        onCheckedChange = {
+                                            viewModel.posFeedBack[i] = Pair(
+                                                viewModel.posFeedBack[i].first,
+                                                !viewModel.posFeedBack[i].second
+                                            )
+                                        },
                                         modifier = Modifier.size(20.dp)
                                     )
                                 }
@@ -358,7 +376,7 @@ fun FeedbackScreen(navController: NavController) {
                         backgroundColor = Color(0xffE5E5E5),
                         contentColor = Color(0xff009245)
                     ),
-                    onClick = { /*TODO*/ }
+                    onClick = { viewModel.openDialog.value = true }
                 ) {
                     Text(text = "ثبت نظر", style = MaterialTheme.typography.h6)
                 }
@@ -367,17 +385,95 @@ fun FeedbackScreen(navController: NavController) {
                         .weight(2f)
                         .padding(20.dp),
                     colors = ButtonDefaults.buttonColors(Color(0xff009245)),
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        scope.launch {
+                            if (viewModel.selectedRate.value != 0) {
+                                viewModel.sendFeedback(vendorId, vendorName)
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    "لطفا میزان رضایت خود را مشخص کنید",
+                                    Toast.LENGTH_LONG
+                                ).show()
+                            }
+                        }
+                    },
+                    enabled = !viewModel.loadingState.value
                 ) {
-                    Text(
-                        text = "ثبت بازخورد",
-                        color = Color.White,
-                        style = MaterialTheme.typography.h6
-                    )
+                    if (!viewModel.loadingState.value)
+                        Text(
+                            text = "ثبت بازخورد",
+                            color = Color.White,
+                            style = MaterialTheme.typography.h6
+                        )
+                    else
+                        CircularProgressIndicator(
+                            strokeWidth = 2.dp,
+                            modifier = Modifier.size(30.dp)
+                        )
                 }
             }
         }
     }
+//    else
+//        Column(modifier = Modifier.fillMaxSize()) {
+//            Icon(imageVector = Icons.Default.QrCode2, contentDescription = "")
+//            Text(text = "کد اسکن شده معتبر نمیباشد")
+//        }
+
+    if (viewModel.openDialog.value) {
+
+        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+            AlertDialog(
+                onDismissRequest = { viewModel.openDialog.value = false },
+                confirmButton = {
+                    Button(onClick = { viewModel.openDialog.value = false }) {
+                        Text(text = "ثبت")
+                    }
+                },
+                text = {
+                    Column(
+                        Modifier.fillMaxWidth(),
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        Row(
+                            Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            IconButton(
+                                onClick = { viewModel.openDialog.value = false },
+                                modifier = Modifier.size(20.dp)
+                            ) {
+                                Icon(
+                                    imageVector = Icons.Default.Close,
+                                    contentDescription = "CloseDialog"
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(14.dp))
+                            Text(
+                                text = "ثبت نظر",
+                                modifier = Modifier.fillMaxWidth(),
+                                fontSize = 20.sp
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(20.dp))
+                        OutlinedTextField(
+                            modifier = Modifier.height((LocalConfiguration.current.screenHeightDp * 0.6).dp),
+                            value = viewModel.comment.value,
+                            maxLines = 10,
+                            onValueChange = { viewModel.comment.value = it })
+                    }
+                }
+            )
+        }
+    }
+
+    if (viewModel.loadingState.value) {
+        Box(modifier = Modifier
+            .fillMaxSize()
+            .clickable { })
+    }
+
 }
 
 val ratingOptions: List<RatingItem> = listOf(

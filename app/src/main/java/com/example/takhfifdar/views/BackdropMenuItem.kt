@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.QrCode2
+import androidx.compose.material.icons.filled.Logout
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,7 +23,7 @@ fun BackdropMenuItem(title: String, onClick: () -> Unit) {
             .fillMaxSize()
             .clickable { onClick() }
         ) {
-        Icon(imageVector = Icons.Filled.QrCode2, contentDescription = "icon")
+        Icon(imageVector = Icons.Filled.Logout, contentDescription = "icon")
         Spacer(modifier = Modifier.width(10.dp))
         Text(text = title, fontStyle = FontStyle.Italic, fontSize = 16.sp)
     }

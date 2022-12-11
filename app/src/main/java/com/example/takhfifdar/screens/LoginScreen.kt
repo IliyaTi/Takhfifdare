@@ -1,7 +1,7 @@
 package com.example.takhfifdar.screens
 
-import android.util.Log
-import android.widget.Toast
+import android.app.Activity
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -11,12 +11,15 @@ import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.KeyboardType
@@ -24,11 +27,16 @@ import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import com.example.takhfifdar.R
+import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
+import kotlin.system.exitProcess
 
 @Composable
-fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
+fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
+
+    BackHandler {
+        context.finishAndRemoveTask()
+    }
 
     Row(Modifier.fillMaxSize()) {
         Box(
@@ -44,6 +52,8 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                 .fillMaxSize()
         )
     }
+
+
 
     Column(modifier = Modifier.fillMaxSize()) {
         Box(
@@ -89,15 +99,10 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
                         visualTransformation = PasswordVisualTransformation()
                     )
                     Spacer(modifier = Modifier.height(30.dp))
-                    Button(onClick = {
-                        try {
-                            viewModel.login()
-                            navController.navigate("HomeScreen/${viewModel.loggedInUser.value!!.id}")
-                        } catch (e: Exception) {
-                            e.localizedMessage?.let { Log.e("fuck", it) }
-                        }
-
-                    }, shape = RoundedCornerShape(4.dp)) {
+                    Button(
+                        onClick = { viewModel.login() },
+                        shape = RoundedCornerShape(4.dp)
+                    ) {
                         Text(text = "ورود", fontSize = 16.sp)
                     }
                 }
@@ -109,11 +114,14 @@ fun LoginScreen(navController: NavController, viewModel: LoginScreenViewModel) {
 
     }
     if (viewModel.loadingState.value) {
-        Box(modifier = Modifier
-            .fillMaxSize()
-            .background(Color(0x99000000))
-        ){
-            CircularProgressIndicator()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Color(0x6A000000)), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
+        ) {
+            CircularProgressIndicator(color = Color(0xFF183891))
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "شکیبایی کنید", fontSize = 20.sp, color = Color.White)
         }
     }
 
