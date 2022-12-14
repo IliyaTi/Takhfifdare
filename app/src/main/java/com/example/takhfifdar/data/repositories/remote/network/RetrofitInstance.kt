@@ -1,4 +1,4 @@
-package com.example.takhfifdar.data.network
+package com.example.takhfifdar.data.repositories.remote.network
 
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -4,6 +4,7 @@ import android.graphics.ImageFormat
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
 import com.google.zxing.*
+
 import com.google.zxing.common.HybridBinarizer
 import java.nio.ByteBuffer
 

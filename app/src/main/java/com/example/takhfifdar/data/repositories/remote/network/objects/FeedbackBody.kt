@@ -1,4 +1,4 @@
-package com.example.takhfifdar.data.network.objects
+package com.example.takhfifdar.data.repositories.remote.network.objects
 
 import com.google.gson.annotations.SerializedName
 

@@ -1,4 +1,4 @@
-package com.example.takhfifdar.data.database
+package com.example.takhfifdar.data.repositories.local.database
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
@@ -9,7 +9,7 @@ data class User(
     val id: Int = 0,
     val name: String = "",
     val phone: String = "",
-    val credit: String = "",
+    var credit: String = "",
     val image: String = "",
     val email: String = ""
 )

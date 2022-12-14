@@ -1,4 +1,4 @@
-package com.example.takhfifdar.data.database
+package com.example.takhfifdar.data.repositories.local.database
 
 import android.content.Context
 import androidx.room.RoomDatabase
@@ -10,6 +10,7 @@ import androidx.room.Room
 abstract class TakhfifdarDatabase: RoomDatabase() {
 
     abstract fun UserDao(): UserDao
+    abstract fun TokenDao(): TokenDao
 
     companion object {
         @Volatile

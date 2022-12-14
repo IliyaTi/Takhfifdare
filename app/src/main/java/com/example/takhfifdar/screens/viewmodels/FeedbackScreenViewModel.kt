@@ -7,9 +7,9 @@ import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.takhfifdar.data.database.TakhfifdarDatabase
-import com.example.takhfifdar.data.network.RetrofitInstance
-import com.example.takhfifdar.data.network.objects.FeedbackBody
+import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
+import com.example.takhfifdar.data.repositories.remote.network.objects.FeedbackBody
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import kotlinx.coroutines.async
@@ -46,10 +46,9 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
         Pair("عدم رضایت از میزان تخفیف", false),
     )
 
-    suspend fun sendFeedback(id: Int, name: String) {
+    suspend fun sendFeedback(storeId: Int, name: String) {
         try {
             loadingState.value = true
-            val storeId = id
             val userId = viewModelScope.async {
                 TakhfifdarDatabase.getDatabase(getApplication<Application>().applicationContext)
                     .UserDao().getUser()
@@ -64,7 +63,8 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
                         positive = positive,
                         negative = negative,
                         reaction = selectedRate.value
-                    )
+                    ),
+                    "Bearer " + TakhfifdarDatabase.getDatabase(getApplication<Application>().applicationContext).TokenDao().getToken().token
                 )
             }
             val res = req.await()

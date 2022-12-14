@@ -4,8 +4,8 @@ import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import com.example.takhfifdar.data.database.TakhfifdarDatabase
-import com.example.takhfifdar.data.database.User
+import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.local.database.User
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 import kotlinx.coroutines.launch

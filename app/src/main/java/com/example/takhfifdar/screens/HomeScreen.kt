@@ -28,10 +28,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.core.content.ContextCompat
 import com.example.takhfifdar.R
-import com.example.takhfifdar.data.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.userdata.LoggedInUser
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
-import com.example.takhfifdar.screens.viewmodels.HomeScreenViewModel
 import com.example.takhfifdar.views.BackdropMenuItem
 import kotlinx.coroutines.launch
 
@@ -40,7 +40,6 @@ import kotlinx.coroutines.launch
 fun HomeScreen(
     context: Activity,
     launcher: ManagedActivityResultLauncher<String, Boolean>,
-    viewModel: HomeScreenViewModel
 ) {
     val scope = rememberCoroutineScope()
     var backdropState = rememberBackdropScaffoldState(initialValue = BackdropValue.Concealed)
@@ -86,11 +85,13 @@ fun HomeScreen(
                     ) {
                         Row {
                             Icon(imageVector = Icons.Default.Person, contentDescription = "")
-                            Text(text = viewModel.user.value.name)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = LoggedInUser.user.value.name)
                         }
                         Row {
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
-                            Text(text = viewModel.user.value.credit)
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Text(text = LoggedInUser.user.value.credit)
                         }
                     }
                 }
@@ -112,7 +113,9 @@ fun HomeScreen(
                     .clickable {
                         val camPermission =
                             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        if (camPermission != PackageManager.PERMISSION_GRANTED) launcher.launch(Manifest.permission.CAMERA)
+                        if (camPermission != PackageManager.PERMISSION_GRANTED) launcher.launch(
+                            Manifest.permission.CAMERA
+                        )
                         else Navigator.navigateTo(navTarget = NavTarget.QrScanner)
                     }
                     .layoutId("icon")
@@ -124,7 +127,9 @@ fun HomeScreen(
                     .clickable {
                         val camPermission =
                             ContextCompat.checkSelfPermission(context, Manifest.permission.CAMERA)
-                        if (camPermission != PackageManager.PERMISSION_GRANTED) launcher.launch(Manifest.permission.CAMERA)
+                        if (camPermission != PackageManager.PERMISSION_GRANTED) launcher.launch(
+                            Manifest.permission.CAMERA
+                        )
                         else Navigator.navigateTo(navTarget = NavTarget.QrScanner)
                     }
                     .layoutId("button")
@@ -148,7 +153,7 @@ fun HomeScreen(
 
 }
 
-val mainSet = ConstraintSet() {
+val mainSet = ConstraintSet {
     val bg = createRefFor("bg")
     val button = createRefFor("button")
     val icon = createRefFor("icon")

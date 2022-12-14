@@ -25,14 +25,15 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.example.takhfifdar.data.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.*
 import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
-import com.example.takhfifdar.screens.viewmodels.HomeScreenViewModel
 import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
+import com.example.takhfifdar.screens.viewmodels.QrCodeScannerViewModel
 import com.example.takhfifdar.ui.theme.TakhfifdarTheme
+import com.example.takhfifdar.util.Connection
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
@@ -44,10 +45,10 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            val viewModel: MainActivityViewModel = viewModel()
             val database = TakhfifdarDatabase.getDatabase(this)
             TakhfifdarTheme {
                 window.statusBarColor = Color(0xFF001E60).toArgb()
+                val state = Connection.connectivityState()
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
@@ -66,6 +67,11 @@ class MainActivity : ComponentActivity() {
                     )
 
                     NavigationComponent(navController, this@MainActivity, launcher, database)
+
+                    if (state.value == Connection.ConnectionState.Unavailable) {
+                        NetworkUnavailable()
+
+                    }
 
                 }
             }
@@ -90,11 +96,12 @@ fun NavigationComponent(
     NavHost(navController = navController, startDestination = "SplashScreen") {
 
         composable("HomeScreen") {
-            HomeScreen(activity, launcher, viewModel<HomeScreenViewModel>())
+            HomeScreen(activity, launcher)
         }
 
         composable("QrScanner") {
-            QrCodeScanner()
+//            QrCodeScanner(viewModel<QrCodeScannerViewModel>())
+            NewScanner(viewModel<QrCodeScannerViewModel>())
         }
 
         composable(
