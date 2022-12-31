@@ -22,7 +22,6 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -39,7 +38,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
     Row(Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier
-                .background(Color(0xffE51900))
+                .background(Color(0xff43C4D0))
                 .weight(1f)
                 .fillMaxSize()
         )
@@ -60,7 +59,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                 .clip(RoundedCornerShape(0.dp, 0.dp, 32.dp, 0.dp))
         ) {
             Image(
-                painter = painterResource(id = R.drawable.login),
+                painter = painterResource(id = R.drawable.login_header),
                 modifier = Modifier.fillMaxWidth(),
                 contentDescription = "",
                 contentScale = ContentScale.Crop
@@ -86,7 +85,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                             onValueChange = { viewModel.phoneNumber.value = it },
                             label = { Text(text = "شماره تلفن") },
                             maxLines = 1,
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone, imeAction = ImeAction.Done),
                         )
                         Spacer(modifier = Modifier.height(30.dp))
                         Button(
@@ -106,11 +105,11 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
 
                     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                         OutlinedTextField(
-                            value = viewModel.otp.value.toString(),
+                            value = viewModel.otp.value,
                             onValueChange = { viewModel.otp.value = it },
                             label = { Text(text = "کد ارسالی") },
                             maxLines = 1,
-                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email, imeAction = ImeAction.Done),
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                         )
                         Spacer(modifier = Modifier.height(30.dp))
                         Button(

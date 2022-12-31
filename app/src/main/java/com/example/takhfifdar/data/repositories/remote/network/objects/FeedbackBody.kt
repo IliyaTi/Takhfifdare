@@ -10,5 +10,6 @@ data class FeedbackBody(
     val userId: Int,
     val positive: Int,
     val negative: Int,
-    val reaction: Int
+    val reaction: Int,
+    val comment: String
 )

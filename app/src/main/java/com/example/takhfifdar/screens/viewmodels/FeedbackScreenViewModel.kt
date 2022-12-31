@@ -62,7 +62,8 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
                         userId = userId.await().id,
                         positive = positive,
                         negative = negative,
-                        reaction = selectedRate.value
+                        reaction = selectedRate.value,
+                        comment = comment.value
                     ),
                     "Bearer " + TakhfifdarDatabase.getDatabase(getApplication<Application>().applicationContext).TokenDao().getToken().token
                 )

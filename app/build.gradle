@@ -7,11 +7,7 @@ plugins {
 
 android {
     signingConfigs {
-        debug {
-            storeFile file('C:\\Users\\Ilya\\Desktop\\testkeystore1.jks')
-            storePassword 'flutter'
-            keyAlias 'flutter'
-            keyPassword 'flutter'
+        release {
         }
     }
     compileSdk 33
@@ -31,9 +27,9 @@ android {
 
     buildTypes {
         release {
-//            shrinkResources true
-//            minifyEnabled true
-//            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            shrinkResources true
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
     compileOptions {
@@ -90,13 +86,13 @@ dependencies {
     implementation 'com.google.accompanist:accompanist-permissions:0.21.1-beta'
 
     // CameraX
-    def camerax_version = "1.0.2"
-    implementation "androidx.camera:camera-camera2:${camerax_version}"
-    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
-    implementation "androidx.camera:camera-view:1.0.0-alpha31"
+//    def camerax_version = "1.0.2"
+//    implementation "androidx.camera:camera-camera2:${camerax_version}"
+//    implementation "androidx.camera:camera-lifecycle:${camerax_version}"
+//    implementation "androidx.camera:camera-view:1.0.0-alpha31"
 
     // Zxing
-    implementation 'com.google.zxing:core:3.4.0'
+//    implementation 'com.google.zxing:core:3.4.0'
 
     // Room
     implementation "androidx.room:room-runtime:2.4.3"
@@ -108,5 +104,8 @@ dependencies {
     implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
 
     implementation 'com.github.yuriy-budiyev:code-scanner:2.3.2'
+
+    // Glide
+    implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
 
 }

@@ -29,12 +29,11 @@ import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabas
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.*
-import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
-import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
-import com.example.takhfifdar.screens.viewmodels.QrCodeScannerViewModel
+import com.example.takhfifdar.screens.viewmodels.*
 import com.example.takhfifdar.ui.theme.TakhfifdarTheme
 import com.example.takhfifdar.util.Connection
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 
@@ -42,12 +41,13 @@ import kotlinx.coroutines.flow.onEach
 @ExperimentalPermissionsApi
 class MainActivity : ComponentActivity() {
 
+    @OptIn(ExperimentalCoroutinesApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
             val database = TakhfifdarDatabase.getDatabase(this)
             TakhfifdarTheme {
-                window.statusBarColor = Color(0xFF001E60).toArgb()
+                window.statusBarColor = Color(0xFF2e3192).toArgb()
                 val state = Connection.connectivityState()
                 // A surface container using the 'background' color from the theme
                 Surface(
@@ -96,7 +96,7 @@ fun NavigationComponent(
     NavHost(navController = navController, startDestination = "SplashScreen") {
 
         composable("HomeScreen") {
-            HomeScreen(activity, launcher)
+            HomeScreen(activity, launcher, viewModel<HomeScreenViewModel>(factory = HomeScreenViewModelFactory(TakhfifdareApplication(), launcher, activity)))
         }
 
         composable("QrScanner") {

@@ -1,7 +1,14 @@
 package com.example.takhfifdar.screens
 
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.core.Spring
+import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.slideInHorizontally
+import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -15,8 +22,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.*
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalConfiguration
@@ -30,6 +36,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
+import com.bumptech.glide.integration.compose.GlideImage
 import com.example.takhfifdar.R
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
@@ -38,14 +46,21 @@ import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
+@OptIn(ExperimentalGlideComposeApi::class)
 @Composable
 fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
 
     var vendorId by remember { mutableStateOf(0) }
     var vendorName by remember { mutableStateOf("") }
+    var vendorPic by remember { mutableStateOf("") }
 
     LaunchedEffect(key1 = true) {
-        val vendorObj = JSONObject(vendor)
+        val vendorObj = JSONObject(vendor.split("~")[0])
+        try {
+            vendorPic = vendor.split("~")[1].replace("*", "/")
+        } catch (e: Exception){
+            Log.e("FEEDBACKSCREEN", "picture path does not exist!")
+        }
         vendorId = vendorObj.getInt("id")
         vendorName = vendorObj.getString("username")
     }
@@ -59,29 +74,21 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
 
 
     val wholeSet = ConstraintSet {
-        val logo = createRefFor("logo")
-        val vendorName = createRefFor("name")
+        val topPart = createRefFor("topPart")
+//        val logo = createRefFor("logo")
+//        val vendorName = createRefFor("name")
         val rating = createRefFor("rating")
         val tabs = createRefFor("tabs")
-        val close = createRefFor("close")
+//        val close = createRefFor("close")
 
-        constrain(close) {
-            top.linkTo(parent.top, margin = 16.dp)
-            end.linkTo(parent.end, margin = 16.dp)
-        }
-
-        constrain(logo) {
+        constrain(topPart) {
             top.linkTo(parent.top)
             start.linkTo(parent.start)
-        }
-
-        constrain(vendorName) {
-            top.linkTo(logo.bottom)
             end.linkTo(parent.end)
         }
 
         constrain(rating) {
-            top.linkTo(vendorName.bottom, 25.dp)
+            top.linkTo(topPart.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
@@ -94,6 +101,31 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
             bottom.linkTo(parent.bottom)
         }
 
+    }
+    
+    val topSet = ConstraintSet {
+        val bar = createRefFor("bar")
+        val vendorName = createRefFor("name")
+        val image = createRefFor("image")
+        
+        constrain(bar) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
+        }
+        
+        constrain(vendorName) {
+            end.linkTo(parent.end)
+            bottom.linkTo(parent.bottom)
+        }
+        
+        constrain(image) {
+            height = Dimension.fillToConstraints
+            top.linkTo(parent.top)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            bottom.linkTo(parent.bottom)
+        }
     }
 
     val tabsSet = ConstraintSet {
@@ -125,43 +157,89 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
 
 //    if (!viewModel.qrScannerError.value)
     ConstraintLayout(wholeSet, modifier = Modifier.fillMaxSize()) {
+        
+        ConstraintLayout(topSet, modifier = Modifier
+            .layoutId("topPart")
+            .height(200.dp)) {
 
-        IconButton(onClick = { Navigator.navigateTo(NavTarget.HomeScreen) }, modifier = Modifier.layoutId("close")) {
-            Icon(imageVector = Icons.Default.Close, contentDescription = "")
+            GlideImage(
+                model = vendorPic,
+                contentDescription = "",
+                modifier = Modifier.layoutId("image"),
+                contentScale = ContentScale.Crop
+            )
+
+            Row(modifier = Modifier.fillMaxWidth().layoutId("bar").background(Brush.verticalGradient(
+                listOf(Color.White, Color.Transparent)
+            )), horizontalArrangement = Arrangement.SpaceBetween) {
+
+                Image(
+                    painter = painterResource(id = R.drawable.logo),
+                    contentDescription = "logo",
+                    modifier = Modifier
+                        .size(50.dp)
+                        .padding(start = 6.dp, top = 12.dp)
+                )
+
+                IconButton(onClick = { Navigator.navigateTo(NavTarget.HomeScreen) }, modifier = Modifier
+                    .padding(end = 6.dp, top = 6.dp)) {
+                    Icon(imageVector = Icons.Default.Close, contentDescription = "", modifier = Modifier)
+                }
+            }
+
+
+
+            Box(modifier = Modifier
+                .layoutId("name")
+                .fillMaxWidth()
+                .background(
+                    Brush.verticalGradient(
+                        listOf(Color.Transparent, Color.White),
+                        tileMode = TileMode.Decal
+                    )
+                )) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl ) {
+                    Text(
+                        text = vendorName,
+                        fontSize = 28.sp, fontWeight = FontWeight.Bold,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .align(Alignment.BottomStart)
+                            .padding(end = 36.dp, start = 36.dp, top = 20.dp),
+                        color = Color.Black
+                    )
+                }
+            }
+
+
         }
 
-        Image(
-            painter = painterResource(id = R.drawable.logo),
-            contentDescription = "logo",
-            modifier = Modifier
-                .layoutId("logo")
-                .size(150.dp)
-        )
-        Text(
-            text = vendorName,
-            fontSize = 36.sp, fontWeight = FontWeight.Bold,
-            modifier = Modifier
-                .layoutId("name")
-                .padding(end = 36.dp)
-        )
+        
         Row(
             modifier = Modifier
                 .fillMaxWidth()
+                .height(100.dp)
                 .padding(horizontal = 25.dp, vertical = 18.dp)
                 .layoutId("rating"),
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            verticalAlignment = Alignment.CenterVertically
         ) {
+
             for (i in 1..5) {
+                val rateAnimation = animateDpAsState(
+                    targetValue = if (viewModel.selectedRate.value == i) 60.dp else 48.dp,
+                    animationSpec = spring(Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium),
+                )
                 Image(
                     painter = painterResource(ratingOptions[i - 1].imgRes),
                     contentDescription = "",
                     colorFilter = ColorFilter.tint(if (viewModel.selectedRate.value == i) ratingOptions[i - 1].color else Color.Gray),
                     modifier = Modifier
+                        .weight(1f)
                         .clickable(
                             interactionSource = remember { MutableInteractionSource() },
                             indication = null
                         ) { viewModel.selectedRate.value = i }
-                        .size(48.dp)
+                        .size(rateAnimation.value)
                 )
             }
         }
@@ -201,92 +279,105 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                     Text(text = "نظرات مثبت", fontSize = 24.sp)
                 }
             }
-            if (viewModel.selectedTab.value == 1)
             /** Negative feedback page : START **/
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .layoutId("content")
-                        .background(Color(0xffE5E5E5))
+                AnimatedVisibility(
+                    visible = viewModel.selectedTab.value == 1,
+                    modifier = Modifier.layoutId("content"),
+                    enter = slideInHorizontally() { -1050 },
+                    exit = slideOutHorizontally() { -1050 }
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 20.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+//                            .layoutId("content")
+                            .background(Color(0xffE5E5E5))
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.End,
-                            modifier = Modifier.weight(1f)
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 20.dp)
                         ) {
-                            for (i in 0..2) {
-                                Row(
-                                    horizontalArrangement = Arrangement.End,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(6.dp)
-                                ) {
-                                    Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Checkbox(
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = Color(
-                                                0xff009245
-                                            )
-                                        ),
-                                        checked = viewModel.negFeedBack[i].second,
-                                        onCheckedChange = {
-                                            viewModel.negFeedBack[i] = Pair(
-                                                viewModel.negFeedBack[i].first,
-                                                !viewModel.negFeedBack[i].second
-                                            )
-                                        },
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                            Column(
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                for (i in 0..2) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(6.dp)
+                                    ) {
+                                        Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Checkbox(
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = Color(
+                                                    0xff009245
+                                                )
+                                            ),
+                                            checked = viewModel.negFeedBack[i].second,
+                                            onCheckedChange = {
+                                                viewModel.negFeedBack[i] = Pair(
+                                                    viewModel.negFeedBack[i].first,
+                                                    !viewModel.negFeedBack[i].second
+                                                )
+                                            },
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.End,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 6.dp)
-                        ) {
-                            for (i in 3..5) {
-                                Row(
-                                    horizontalArrangement = Arrangement.End,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(6.dp)
-                                ) {
-                                    Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Checkbox(
-                                        checked = viewModel.negFeedBack[i].second,
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = Color(
-                                                0xff009245
-                                            )
-                                        ),
-                                        onCheckedChange = {
-                                            viewModel.negFeedBack[i] = Pair(
-                                                viewModel.negFeedBack[i].first,
-                                                !viewModel.negFeedBack[i].second
-                                            )
-                                        },
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                            Column(
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 6.dp)
+                            ) {
+                                for (i in 3..5) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.End,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(6.dp)
+                                    ) {
+                                        Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Checkbox(
+                                            checked = viewModel.negFeedBack[i].second,
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = Color(
+                                                    0xff009245
+                                                )
+                                            ),
+                                            onCheckedChange = {
+                                                viewModel.negFeedBack[i] = Pair(
+                                                    viewModel.negFeedBack[i].first,
+                                                    !viewModel.negFeedBack[i].second
+                                                )
+                                            },
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
+
             /** Negative feedback page : END **/
-            else
             /** POSITIVE feedback page : START **/
+
+            AnimatedVisibility(
+                visible = viewModel.selectedTab.value == 2,
+                modifier = Modifier.layoutId("content"),
+                enter = slideInHorizontally() { 1050 },
+                exit = slideOutHorizontally() { 1050 }
+            ) {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
-                        .layoutId("content")
+//                        .layoutId("content")
                         .background(Color(0xffE5E5E5))
                 ) {
                     Row(
@@ -360,6 +451,8 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         }
                     }
                 }
+            }
+
             /** POSITIVE feedback page : END **/
 
             Row(

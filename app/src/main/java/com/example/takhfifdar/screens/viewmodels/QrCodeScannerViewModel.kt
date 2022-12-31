@@ -1,20 +1,20 @@
 package com.example.takhfifdar.screens.viewmodels
 
 import android.app.Application
+import android.util.Log
 import android.widget.Toast
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.data.repositories.remote.network.objects.QrBody
-import com.example.takhfifdar.data.userdata.LoggedInUser
-import com.example.takhfifdar.util.ServerNotRespondingException
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
+import org.json.JSONObject
 import java.net.SocketTimeoutException
 
 class QrCodeScannerViewModel(application: Application) : AndroidViewModel(application) {
@@ -29,25 +29,38 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
 
     val database = TakhfifdarDatabase.getDatabase(application)
 
-    fun useCredit(storeId: Int): Job {
+    fun useCredit(storeId: Int, vendorObj: JSONObject): Job {
         return viewModelScope.launch {
             try {
                 val req = RetrofitInstance.api.spendCredit(
                     "Bearer " + database.TokenDao().getToken().token,
-                    QrBody(storeId, database.UserDao().getUser().id)
+                    QrBody(storeId, TakhfifdareApplication.loggedInUser.value.id)
                 )
                 if (req.isSuccessful) {
-                    val user = req.body()!!.user
-                    LoggedInUser.user.value = user
-                    database.UserDao().updateUser(user)
+                    TakhfifdareApplication.loggedInUser.value.credit = req.body()?.user?.credit ?: "0"
+                    database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value)
+                    Navigator.navigateTo(
+                        navTarget = NavTarget.FeedbackScreen,
+                        args = vendorObj.toString() + "~" + req.body()?.storeImage?.replace("/", "*")
+                    )
                 } else {
-                    if (req.code() >= 500) throw ServerNotRespondingException()
-                    else if (req.code() >= 400) throw com.example.takhfifdar.util.AccessDeniedException()
+                    if (req.code() >= 500) {
+                        Toast.makeText(getApplication(), "مشکلی در سرور های ما بوجود آمده", Toast.LENGTH_LONG).show()
+                    }
+                    else if (req.code() == 401) {
+                        Navigator.navigateTo(NavTarget.HomeScreen)
+                        Toast.makeText(getApplication(), "متاسفانه اعتبار شما به پایان رسیده", Toast.LENGTH_LONG).show()
+                    } else if (req.code() == 405) {
+                        Navigator.navigateTo(NavTarget.LoginScreen)
+                        Toast.makeText(getApplication(), "لطفا دوباره ورود نمایید", Toast.LENGTH_LONG).show()
+                    }
                 }
             } catch (e: SocketTimeoutException) {
                 Toast.makeText(getApplication(), "جوابی دریافت نشد", Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
-                Toast.makeText(getApplication(), "مشکل ناشناخته ای رخ داد", Toast.LENGTH_LONG).show()
+                e.printStackTrace()
+                Navigator.navigateTo(NavTarget.LoginScreen)
+                Toast.makeText(getApplication(), "لطفا دوباره ورود نمایید", Toast.LENGTH_LONG).show()
             }
         }
     }
