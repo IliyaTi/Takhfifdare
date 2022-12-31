@@ -1,35 +1,41 @@
 package com.example.takhfifdar.screens
 
-import android.Manifest
 import android.app.Activity
-import android.content.Context
-import android.content.pm.PackageManager
+import android.content.Intent
+import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
-import androidx.core.content.ContextCompat
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
@@ -60,7 +66,8 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = true) {
 //        LoggedInUser.user.value = TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
-        TakhfifdareApplication.loggedInUser.value = TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
+        TakhfifdareApplication.loggedInUser.value =
+            TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
     }
 
     BackdropScaffold(
@@ -86,13 +93,14 @@ fun HomeScreen(
                         modifier = Modifier.fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        IconButton(onClick = {
-                            scope.launch {
-                                if (backdropState.isConcealed) backdropState.reveal()
-                                else backdropState.conceal()
-                            }
-                        },
-                            ) {
+                        IconButton(
+                            onClick = {
+                                scope.launch {
+                                    if (backdropState.isConcealed) backdropState.reveal()
+                                    else backdropState.conceal()
+                                }
+                            },
+                        ) {
                             Image(
                                 painter = painterResource(id = R.drawable.logo),
                                 contentDescription = "",
@@ -124,7 +132,9 @@ fun HomeScreen(
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
 //                            Text(text = LoggedInUser.user.value.credit)
-                            Text(text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار")
+                            Text(
+                                text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار"
+                            )
                         }
                     }
                 }
@@ -144,14 +154,23 @@ fun HomeScreen(
                     }
                 }
             }
+            BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
+                homeScreenNavController.navigate("tapToScan")
+                scope.launch { backdropState.conceal() }
+            }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs")
+                scope.launch { backdropState.conceal() }
             }
         },
         frontLayerContent = {
-            NavHost(navController = homeScreenNavController, startDestination = "tapToScan", modifier = Modifier.fillMaxSize()) {
+            NavHost(
+                navController = homeScreenNavController,
+                startDestination = "aboutUs",
+                modifier = Modifier.fillMaxSize()
+            ) {
                 composable("aboutUs") {
-                    AboutUs()
+                    AboutUs(activity = context)
                 }
                 composable("tapToScan") {
                     TapToScan(viewModel = viewModel)
@@ -191,19 +210,54 @@ val mainSet = ConstraintSet {
 }
 
 @Composable
-fun AboutUs() {
+fun AboutUs(activity: Activity) {
 
-
-}
-
-@Composable
-fun LoginOrLogout() {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally
+        )
+        {
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(text = "داستان تخفیف داره", style = MaterialTheme.typography.h5)
+            Spacer(modifier = Modifier.height(10.dp))
+            Text(
+                text = "ماجرای تخفیف داره از آن جایی شروع شد که ما تصمیم به بیان حرف تازه ای در دنیای تخفیف ها گرفتیم.",
+                textAlign = TextAlign.Center,
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "در واقع استراتژی تخفیف داره به گونه ای طراحی شده، که فرصتی ویژه در اختیار خریداران قرار می دهد. تخفیف داره صرفا داشتن یک تخفیف ساده برای کالاهای انتخابی شما نیست، بلکه حجم گسترده ای از حق انتخابه!",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(6.dp))
+            Text(
+                text = "برای شروع، لطفا از طریق وبسایت ثبت نام نمایید و یا اگر ثبت نام نموده اید، از طریق گزینه ورود در منو وارد شوید.",
+                textAlign = TextAlign.Center
+            )
+            Spacer(modifier = Modifier.height(12.dp))
+            Button(
+                modifier = Modifier.fillMaxWidth(),
+                onClick = {
+                val urlIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/auth"))
+                activity.startActivity(urlIntent)
+            }) {
+                Text(text = "ثبت نام")
+            }
+        }
+    }
 
 }
 
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {
-    Image(painter = painterResource(id = R.drawable.asset_3), contentDescription = "", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
+    Image(
+        painter = painterResource(id = R.drawable.asset_3),
+        contentDescription = "",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
     ConstraintLayout(mainSet, modifier = Modifier.fillMaxSize()) {
         Button(
             onClick = {
@@ -241,7 +295,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
             colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
             elevation = ButtonDefaults.elevation(10.dp)
         ) {
-            Text(text = "اسکن کن", fontSize = 26.sp ,fontWeight = FontWeight.W900)
+            Text(text = "اسکن کن", fontSize = 26.sp, fontWeight = FontWeight.W900)
         }
         Image(
             painter = painterResource(id = R.drawable.home_bottom),

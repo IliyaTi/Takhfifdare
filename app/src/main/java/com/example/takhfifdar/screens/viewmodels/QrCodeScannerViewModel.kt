@@ -34,11 +34,11 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
             try {
                 val req = RetrofitInstance.api.spendCredit(
                     "Bearer " + database.TokenDao().getToken().token,
-                    QrBody(storeId, TakhfifdareApplication.loggedInUser.value.id)
+                    QrBody(storeId, TakhfifdareApplication.loggedInUser.value!!.id)
                 )
                 if (req.isSuccessful) {
-                    TakhfifdareApplication.loggedInUser.value.credit = req.body()?.user?.credit ?: "0"
-                    database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value)
+                    TakhfifdareApplication.loggedInUser.value!!.credit = req.body()?.user?.credit ?: "0"
+                    database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value!!)
                     Navigator.navigateTo(
                         navTarget = NavTarget.FeedbackScreen,
                         args = vendorObj.toString() + "~" + req.body()?.storeImage?.replace("/", "*")

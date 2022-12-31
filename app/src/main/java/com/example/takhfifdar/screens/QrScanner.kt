@@ -1,6 +1,7 @@
 package com.example.takhfifdar.screens
 
 import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -16,17 +17,24 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.budiyev.android.codescanner.*
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.viewmodels.QrCodeScannerViewModel
 import com.example.takhfifdar.util.runOnMain
 import org.json.JSONObject
 
 @Composable
-fun NewScanner(viewModel: QrCodeScannerViewModel) {
+fun QrScanner(viewModel: QrCodeScannerViewModel) {
 
     lateinit var codeScanner: CodeScanner
     var storeId by remember { mutableStateOf(0) }
     var storeName by remember { mutableStateOf("") }
     var loadingState by remember { mutableStateOf(false) }
+
+    BackHandler {
+        codeScanner.stopPreview()
+        codeScanner.releaseResources()
+    }
 
     AndroidView(
         modifier = Modifier.fillMaxSize(),

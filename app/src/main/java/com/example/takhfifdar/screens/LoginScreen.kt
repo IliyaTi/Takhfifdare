@@ -31,10 +31,6 @@ import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
 @Composable
 fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
 
-    BackHandler {
-        context.finishAndRemoveTask()
-    }
-
     Row(Modifier.fillMaxSize()) {
         Box(
             modifier = Modifier

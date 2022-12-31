@@ -45,11 +45,8 @@ fun SplashScreen(database: TakhfifdarDatabase) {
 
             if (user != null) {
                 TakhfifdareApplication.loggedInUser.value = user
-                Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
-            } else {
-                Navigator.navigateTo(navTarget = NavTarget.LoginScreen)
             }
-
+            Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
         }
     }
 
