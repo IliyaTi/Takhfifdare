@@ -59,7 +59,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
                 RetrofitInstance.api.sendFeedback(
                     FeedbackBody(
                         storeId = storeId,
-                        userId = userId.await().id,
+                        userId = userId.await()!!.id,
                         positive = positive,
                         negative = negative,
                         reaction = selectedRate.value,

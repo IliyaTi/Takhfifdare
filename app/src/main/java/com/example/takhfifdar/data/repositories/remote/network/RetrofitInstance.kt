@@ -1,5 +1,6 @@
 package com.example.takhfifdar.data.repositories.remote.network
 
+import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -15,6 +16,7 @@ class RetrofitInstance {
 //                return@Interceptor it.proceed(newRequest)
 //            })
 //        }
+
 
         private val retrofit by lazy {
             Retrofit.Builder()

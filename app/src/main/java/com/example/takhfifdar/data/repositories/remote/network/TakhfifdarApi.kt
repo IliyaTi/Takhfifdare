@@ -1,9 +1,11 @@
 package com.example.takhfifdar.data.repositories.remote.network
 
 import com.example.takhfifdar.data.repositories.remote.network.objects.*
+import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
+import retrofit2.http.Headers
 import retrofit2.http.POST
 
 interface TakhfifdarApi {
@@ -20,7 +22,8 @@ interface TakhfifdarApi {
     @POST("api/api/confirm-code")
     suspend fun confirmCode(@Body body: ConfirmCodeBody): Response<ConfirmCodeResponse>
 
+    @Headers("Accept: application/json")
     @POST("api/api/edit-profile")
-    suspend fun editProfile(@Body body: EditProfileBody):
+    suspend fun editProfile(@Header("Authorization") token: String, @Body body: EditProfileBody): Response<EditProfileResponse>
 
 }

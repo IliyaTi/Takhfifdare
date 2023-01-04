@@ -1,6 +1,7 @@
 package com.example.takhfifdar.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.Button
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
@@ -9,6 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
@@ -32,7 +36,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 textAlign = TextAlign.Center
             )
             OutlinedTextField(
-                value = viewModel.firstName.value,
+                value = viewModel.firstName.value ?: "",
                 onValueChange = { viewModel.firstName.value = it },
                 label = {
                     Row {
@@ -42,8 +46,12 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (!viewModel.firstNameValid.value.first) Text(
+                text = viewModel.firstNameValid.value.second,
+                color = Color.Red
+            )
             OutlinedTextField(
-                value = viewModel.lastName.value,
+                value = viewModel.lastName.value ?: "",
                 onValueChange = { viewModel.lastName.value = it },
                 label = {
                     Row {
@@ -53,8 +61,12 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (!viewModel.lastNameValid.value.first) Text(
+                text = viewModel.lastNameValid.value.second,
+                color = Color.Red
+            )
             OutlinedTextField(
-                value = viewModel.username.value,
+                value = viewModel.username.value ?: "",
                 onValueChange = { viewModel.username.value = it },
                 label = {
                     Row {
@@ -64,8 +76,12 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (!viewModel.usernameValid.value.first) Text(
+                text = viewModel.usernameValid.value.second,
+                color = Color.Red
+            )
             OutlinedTextField(
-                value = viewModel.phoneNumber.value,
+                value = viewModel.phoneNumber.value ?: "",
                 onValueChange = { viewModel.phoneNumber.value = it },
                 label = {
                     Row {
@@ -75,12 +91,47 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (!viewModel.phoneNumberValid.value.first) Text(
+                text = viewModel.phoneNumberValid.value.second,
+                color = Color.Red
+            )
+
             OutlinedTextField(
-                value = viewModel.email.value,
+                value = viewModel.email.value ?: "",
                 onValueChange = { viewModel.email.value = it },
                 label = { Text(text = "ایمیل") },
                 modifier = Modifier.fillMaxWidth()
             )
+
+            OutlinedTextField(
+                value = viewModel.city.value ?: "",
+                onValueChange = { viewModel.city.value = it },
+                label = {
+                    Row {
+                        Text(text = "شهر")
+                        Text(text = "*", color = Color.Red)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            OutlinedTextField(
+                value = viewModel.birthDate.value ?: "",
+                onValueChange = { viewModel.birthDate.value = it },
+                label = {
+                    Row {
+                        Text(text = "تاریخ تولد")
+                        Text(text = "*", color = Color.Red)
+                    }
+                },
+                modifier = Modifier.fillMaxWidth()
+            )
+
+            Button(onClick = {
+                viewModel.submit()
+            }) {
+                Text(text = "ثبت")
+            }
         }
     }
 }

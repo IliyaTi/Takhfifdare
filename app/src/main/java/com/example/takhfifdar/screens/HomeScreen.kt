@@ -130,9 +130,7 @@ fun HomeScreen(
                         Row {
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار"
-                            )
+                            Text(text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار")
                         }
                     }
                 }
