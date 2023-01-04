@@ -20,4 +20,7 @@ interface TakhfifdarApi {
     @POST("api/api/confirm-code")
     suspend fun confirmCode(@Body body: ConfirmCodeBody): Response<ConfirmCodeResponse>
 
+    @POST("api/api/edit-profile")
+    suspend fun editProfile(@Body body: EditProfileBody):
+
 }

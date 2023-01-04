@@ -125,13 +125,11 @@ fun HomeScreen(
                         Row {
                             Icon(imageVector = Icons.Default.Person, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-//                            Text(text = LoggedInUser.user.value.name)
                             Text(text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر")
                         }
                         Row {
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-//                            Text(text = LoggedInUser.user.value.credit)
                             Text(
                                 text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار"
                             )
@@ -155,18 +153,27 @@ fun HomeScreen(
                 }
             }
             BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
-                homeScreenNavController.navigate("tapToScan")
+                homeScreenNavController.navigate("tapToScan") {
+                    launchSingleTop = true
+                    homeScreenNavController.popBackStack()
+                }
                 scope.launch { backdropState.conceal() }
             }
+            BackdropMenuItem(title = "تنظیمات کاربر", icon = Icons.Filled.Settings) {
+                Navigator.navigateTo(NavTarget.FillUserDataScreen)
+            }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
-                homeScreenNavController.navigate("aboutUs")
+                homeScreenNavController.navigate("aboutUs") {
+                    launchSingleTop = true
+                    homeScreenNavController.popBackStack()
+                }
                 scope.launch { backdropState.conceal() }
             }
         },
         frontLayerContent = {
             NavHost(
                 navController = homeScreenNavController,
-                startDestination = "aboutUs",
+                startDestination = if (TakhfifdareApplication.loggedInUser.value == null) "aboutUs" else "tapToScan",
                 modifier = Modifier.fillMaxSize()
             ) {
                 composable("aboutUs") {

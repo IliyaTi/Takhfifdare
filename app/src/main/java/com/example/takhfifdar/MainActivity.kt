@@ -91,7 +91,9 @@ fun NavigationComponent(
 ){
     LaunchedEffect("navigation") {
         Navigator.sharedFlow.onEach {
-            navController.navigate(it)
+            navController.navigate(it) {
+                launchSingleTop = true
+            }
         }.launchIn(this)
     }
     NavHost(navController = navController, startDestination = "SplashScreen") {
@@ -100,12 +102,13 @@ fun NavigationComponent(
             HomeScreen(activity, launcher, viewModel<HomeScreenViewModel>(factory = HomeScreenViewModelFactory(TakhfifdareApplication(), launcher, activity)))
         }
 
+        composable("FillUserDataScreen") {
+            FillUserDataScreen(viewModel = viewModel<FillUserDataScreenViewModel>())
+        }
+
         composable("QrScanner") {
 //            QrCodeScanner(viewModel<QrCodeScannerViewModel>())
             QrScanner(viewModel<QrCodeScannerViewModel>())
-            BackHandler {
-                Navigator.navigateTo(NavTarget.HomeScreen)
-            }
         }
 
         composable(

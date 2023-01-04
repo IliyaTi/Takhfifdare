@@ -31,11 +31,6 @@ fun QrScanner(viewModel: QrCodeScannerViewModel) {
     var storeName by remember { mutableStateOf("") }
     var loadingState by remember { mutableStateOf(false) }
 
-    BackHandler {
-        codeScanner.stopPreview()
-        codeScanner.releaseResources()
-    }
-
     AndroidView(
         modifier = Modifier.fillMaxSize(),
         factory = { context ->

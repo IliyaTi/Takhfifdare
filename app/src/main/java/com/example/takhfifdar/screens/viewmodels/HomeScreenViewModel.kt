@@ -5,12 +5,14 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.pm.PackageManager
+import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.viewModelScope
+import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
@@ -26,6 +28,10 @@ class HomeScreenViewModel(application: Application, private val launcher: Manage
     }
 
     fun proceedToScan() {
+        if (TakhfifdareApplication.loggedInUser.value == null) {
+            Toast.makeText(activity, "لطفا اول وارد شوید", Toast.LENGTH_LONG).show()
+            return
+        }
         val camPermission =
             ContextCompat.checkSelfPermission(activity, Manifest.permission.CAMERA)
         if (camPermission != PackageManager.PERMISSION_GRANTED) launcher.launch(
