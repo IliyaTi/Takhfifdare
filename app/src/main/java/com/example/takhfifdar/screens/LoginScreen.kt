@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.takhfifdar.R
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
 
 @Composable
@@ -46,6 +48,10 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                 .weight(1f)
                 .fillMaxSize()
         )
+    }
+
+    BackHandler {
+        Navigator.navigateTo(NavTarget.HomeScreen)
     }
 
 

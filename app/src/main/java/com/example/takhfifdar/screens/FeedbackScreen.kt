@@ -105,7 +105,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
     
     val topSet = ConstraintSet {
         val bar = createRefFor("bar")
-        val vendorName = createRefFor("name")
+        val vendrName = createRefFor("name")
         val image = createRefFor("image")
         
         constrain(bar) {
@@ -114,7 +114,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
             top.linkTo(parent.top)
         }
         
-        constrain(vendorName) {
+        constrain(vendrName) {
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }

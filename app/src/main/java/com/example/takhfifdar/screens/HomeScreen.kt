@@ -143,6 +143,7 @@ fun HomeScreen(
                 BackdropMenuItem(title = "خروچ", icon = Icons.Filled.Logout) {
                     scope.launch {
                         viewModel.signOut()
+                        backdropState.conceal()
                     }
                 }
                 BackdropMenuItem(title = "تنظیمات کاربر", icon = Icons.Filled.Settings) {
@@ -157,7 +158,7 @@ fun HomeScreen(
                 scope.launch { backdropState.conceal() }
             }
 
-            BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
+            BackdropMenuItem(title = "درباره", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
                     launchSingleTop = true
                     homeScreenNavController.popBackStack()
@@ -172,7 +173,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 composable("aboutUs") {
-                    AboutUs(activity = context)
+                    AboutUs()
                 }
                 composable("tapToScan") {
                     TapToScan(viewModel = viewModel)
@@ -211,46 +212,7 @@ val mainSet = ConstraintSet {
     }
 }
 
-@Composable
-fun AboutUs(activity: Activity) {
-    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-        Image(painter = painterResource(id = R.drawable.bg), contentDescription = "", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(10.dp), horizontalAlignment = Alignment.CenterHorizontally
-        )
-        {
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "داستان تخفیف داره", style = MaterialTheme.typography.h5)
-            Spacer(modifier = Modifier.height(10.dp))
-            Text(
-                text = "ماجرای تخفیف داره از آن جایی شروع شد که ما تصمیم به بیان حرف تازه ای در دنیای تخفیف ها گرفتیم.",
-                textAlign = TextAlign.Center,
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "در واقع استراتژی تخفیف داره به گونه ای طراحی شده، که فرصتی ویژه در اختیار خریداران قرار می دهد. تخفیف داره صرفا داشتن یک تخفیف ساده برای کالاهای انتخابی شما نیست، بلکه حجم گسترده ای از حق انتخابه!",
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(6.dp))
-            Text(
-                text = "برای شروع، لطفا از طریق وبسایت ثبت نام نمایید و یا اگر ثبت نام نموده اید، از طریق گزینه ورود در منو وارد شوید.",
-                textAlign = TextAlign.Center
-            )
-            Spacer(modifier = Modifier.height(12.dp))
-            Button(
-                modifier = Modifier.fillMaxWidth(),
-                onClick = {
-                val urlIntent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/auth"))
-                activity.startActivity(urlIntent)
-            }) {
-                Text(text = "ثبت نام")
-            }
-        }
-    }
 
-}
 
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {

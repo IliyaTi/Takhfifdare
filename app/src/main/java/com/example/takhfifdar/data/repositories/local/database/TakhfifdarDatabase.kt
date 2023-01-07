@@ -6,7 +6,7 @@ import androidx.room.Database
 import androidx.room.Room
 
 
-@Database(entities = [User::class, Token::class], version = 2, exportSchema = false)
+@Database(entities = [User::class, Token::class], version = 3, exportSchema = false)
 abstract class TakhfifdarDatabase: RoomDatabase() {
 
     abstract fun UserDao(): UserDao

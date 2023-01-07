@@ -16,8 +16,8 @@ android {
         applicationId "com.example.takhfifdar"
         minSdk 26
         targetSdk 33
-        versionCode 1
-        versionName "1.0"
+        versionCode 2
+        versionName "1.1"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -107,5 +107,8 @@ dependencies {
 
     // Glide
     implementation "com.github.bumptech.glide:compose:1.0.0-alpha.1"
+
+    // ViewPager
+    implementation "com.google.accompanist:accompanist-pager:0.22.0-rc"
 
 }
