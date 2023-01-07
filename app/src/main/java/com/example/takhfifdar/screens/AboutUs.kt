@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.example.takhfifdar.R
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import com.google.accompanist.pager.ExperimentalPagerApi
 import com.google.accompanist.pager.HorizontalPager
 import com.google.accompanist.pager.rememberPagerState
@@ -181,7 +183,9 @@ fun Page5() {
             Text(text = "کوپن های تخفیف داره محدودیت زمانی ندارند، بنابراین بعد از خرید، شما میتوانید در هر زمانی که مایل بودید از کد تخفیف خود استفاده کنید.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(60.dp))
             Button(
-                onClick = { /*TODO*/ },
+                onClick = {
+                          Navigator.navigateTo(NavTarget.LoginScreen)
+                          },
                 shape = RoundedCornerShape(20.dp)
                 ) {
                 Text(text = "ورود", fontSize = 20.sp)
