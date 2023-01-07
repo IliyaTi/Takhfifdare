@@ -23,7 +23,7 @@ class HomeScreenViewModel(application: Application, private val launcher: Manage
     fun signOut() {
         viewModelScope.launch {
             TakhfifdarDatabase.getDatabase(getApplication()).UserDao().deleteUsers()
-            Navigator.navigateTo(NavTarget.LoginScreen)
+            Navigator.navigateTo(NavTarget.HomeScreen)
         }
     }
 

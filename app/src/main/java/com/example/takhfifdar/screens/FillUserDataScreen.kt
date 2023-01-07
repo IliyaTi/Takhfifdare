@@ -1,18 +1,12 @@
 package com.example.takhfifdar.screens
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.Button
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.material.icons.Icons
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextAlign
@@ -22,6 +16,13 @@ import com.example.takhfifdar.screens.viewmodels.FillUserDataScreenViewModel
 
 @Composable()
 fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
+
+    // Loading indicator
+    if (viewModel.loadingState.value)
+    Column(modifier = Modifier.fillMaxSize().background(Color(0x80000000)), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+        CircularProgressIndicator()
+    }
+
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         Column(
             modifier = Modifier
@@ -114,6 +115,10 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 },
                 modifier = Modifier.fillMaxWidth()
             )
+            if (!viewModel.cityValid.value.first) Text(
+                text = viewModel.cityValid.value.second,
+                color = Color.Red
+            )
 
             OutlinedTextField(
                 value = viewModel.birthDate.value ?: "",
@@ -125,6 +130,10 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     }
                 },
                 modifier = Modifier.fillMaxWidth()
+            )
+            if (!viewModel.birthDateValid.value.first) Text(
+                text = viewModel.birthDateValid.value.second,
+                color = Color.Red
             )
 
             Button(onClick = {

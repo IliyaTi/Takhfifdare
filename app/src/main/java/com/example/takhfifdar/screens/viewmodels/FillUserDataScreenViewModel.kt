@@ -11,11 +11,15 @@ import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabas
 import com.example.takhfifdar.data.repositories.local.database.User
 import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.data.repositories.remote.network.objects.EditProfileBody
+import com.example.takhfifdar.navigation.NavTarget
+import com.example.takhfifdar.navigation.Navigator
 import kotlinx.coroutines.launch
 
 class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(application) {
 
     val database = TakhfifdarDatabase.getDatabase(getApplication())
+
+    val loadingState = mutableStateOf(false)
 
     val firstName = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.first_name)
     val lastName = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.last_name)
@@ -30,12 +34,15 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val usernameValid = mutableStateOf(Pair(true, ""))
     val phoneNumberValid = mutableStateOf(Pair(true, ""))
     val emailValid = mutableStateOf(Pair(true, ""))
+    val cityValid = mutableStateOf(Pair(true, ""))
+    val birthDateValid = mutableStateOf(Pair(true, ""))
 
     fun submit() {
         val isValid = formValidation()
         if (!isValid) return
 
         viewModelScope.launch {
+            loadingState.value = true
             try {
                 val res = RetrofitInstance.api.editProfile(
                     "Bearer " + database.TokenDao().getToken().token,
@@ -44,7 +51,7 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                 if (res.isSuccessful) {
                     println(res.body())
                     val newUser = User(
-                        id = 1,
+                        id = TakhfifdareApplication.loggedInUser.value!!.id,
                         first_name = firstName.value,
                         last_name = lastName.value,
                         name = username.value,
@@ -56,13 +63,22 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         city = city.value
                     )
                     TakhfifdareApplication.loggedInUser.value = newUser
-                    database.UserDao().updateUser(newUser)
+                    database.UserDao().deleteUsers()
+                    database.UserDao().addUser(newUser)
+                    loadingState.value = false
+                    Toast.makeText(getApplication(), "تغییرات با موفقیت ذخیره شد", Toast.LENGTH_LONG).show()
+                    Navigator.navigateTo(NavTarget.HomeScreen)
+                } else if (res.code() == 401) {
+                    loadingState.value = false
+                    Toast.makeText(getApplication(), "زمان این نشست به پایان رسیده، لطفا دوباره وارد شوید.", Toast.LENGTH_LONG).show()
+                    Navigator.navigateTo(NavTarget.LoginScreen)
                 } else {
+                    loadingState.value = false
                     Toast.makeText(getApplication(), "خطا: لطفا دوباره تلاش کنید", Toast.LENGTH_LONG).show()
                 }
-
-                println("the end")
             } catch (e: Exception) {
+                loadingState.value = false
+                Toast.makeText(getApplication(), "مشکل ناشناخته ای رخ داد", Toast.LENGTH_LONG).show()
                 e.printStackTrace()
             }
 
@@ -104,7 +120,12 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
         } else {
             phoneNumberValid.value = Pair(true, "")
         }
-
+        if (city.value.isNullOrBlank()) {
+            cityValid.value = Pair(false, "الزامی است")
+            return false
+        } else {
+            cityValid.value = Pair(true, "")
+        }
 
 //        if (email.value.isNullOrBlank()) {
 //            if (!Patterns.EMAIL_ADDRESS.matcher(email.value).matches()) {

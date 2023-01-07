@@ -16,7 +16,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.example.takhfifdar.R
@@ -58,7 +57,7 @@ fun SplashScreen(database: TakhfifdarDatabase) {
 @Composable
 fun NetworkUnavailable() {
     Image(
-        painter = painterResource(id = R.drawable.asset_3),
+        painter = painterResource(id = R.drawable.bg),
         contentDescription = "",
         contentScale = ContentScale.Crop,
         colorFilter = ColorFilter.tint(Color(0xFF202020)),

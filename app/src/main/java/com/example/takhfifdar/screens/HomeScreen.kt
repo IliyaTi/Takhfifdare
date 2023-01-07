@@ -8,7 +8,6 @@ import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
@@ -19,12 +18,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Rect
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
-import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
@@ -149,6 +145,9 @@ fun HomeScreen(
                         viewModel.signOut()
                     }
                 }
+                BackdropMenuItem(title = "تنظیمات کاربر", icon = Icons.Filled.Settings) {
+                    Navigator.navigateTo(NavTarget.FillUserDataScreen)
+                }
             }
             BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
                 homeScreenNavController.navigate("tapToScan") {
@@ -157,9 +156,7 @@ fun HomeScreen(
                 }
                 scope.launch { backdropState.conceal() }
             }
-            BackdropMenuItem(title = "تنظیمات کاربر", icon = Icons.Filled.Settings) {
-                Navigator.navigateTo(NavTarget.FillUserDataScreen)
-            }
+
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
                     launchSingleTop = true
@@ -216,8 +213,8 @@ val mainSet = ConstraintSet {
 
 @Composable
 fun AboutUs(activity: Activity) {
-
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        Image(painter = painterResource(id = R.drawable.bg), contentDescription = "", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -258,7 +255,7 @@ fun AboutUs(activity: Activity) {
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {
     Image(
-        painter = painterResource(id = R.drawable.asset_3),
+        painter = painterResource(id = R.drawable.bg),
         contentDescription = "",
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop
