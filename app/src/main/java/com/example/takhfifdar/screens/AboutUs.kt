@@ -20,6 +20,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -54,12 +55,6 @@ fun AboutUs() {
         }
     }
 
-    Image(
-        painter = painterResource(id = R.drawable.bg),
-        contentDescription = "",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.FillBounds
-    )
 
     val slidePage = rememberPagerState(0)
 
@@ -105,12 +100,12 @@ fun Page0() {
             .padding(40.dp))
         Column(modifier = Modifier.padding(start = 20.dp, end = 15.dp), horizontalAlignment = Alignment.CenterHorizontally) {
             Text(text = "داستان تخفیف داره", fontWeight = FontWeight.Bold, fontSize = 24.sp, modifier = Modifier.padding(bottom = 6.dp))
-            Text(text = "ماجرای تخفیف داره از آن جایی شروع شد که ما تصمیم به بیان حرف تازه ای در دنیای تخفیف ها گرفتیم.")
+            Text(text = "ماجرای تخفیف داره از آن جایی شروع شد که ما تصمیم به بیان حرف تازه ای در دنیای تخفیف ها گرفتیم.", textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "در واقع استراتژی تخفیف داره به گونه ای طراحی شده، که فرصتی ویژه در اختیار خریداران قرار میدهد.")
-            Text(text = "تخفیف داره صرفا داشتن یک تخفیف ساده برای کالاهای انتخابی شما نیست، بلکه !")
+            Text(text = "در واقع استراتژی تخفیف داره به گونه ای طراحی شده، که فرصتی ویژه در اختیار خریداران قرار میدهد.", textAlign = TextAlign.Center)
+            Text(text = "تخفیف داره صرفا داشتن یک تخفیف ساده برای کالاهای انتخابی شما نیست، بلکه !", textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(20.dp))
-            Text(text = "حجم گسترده ای از حق انتخابه!", color = Color.Red, fontSize = 20.sp)
+            Text(text = "حجم گسترده ای از حق انتخابه!", color = Color.Red, fontSize = 20.sp, textAlign = TextAlign.Center)
         }
     }
 }
@@ -122,9 +117,9 @@ fun Page1() {
             .fillMaxWidth()
             .padding(vertical = 40.dp))
         Column(modifier = Modifier.padding(start = 20.dp, end = 15.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "در حال حاضر تخفیف داره به صورت گسترده در سطح تهران، کرج و سمنان اصناف مختلف را نظیر پوشاک، استخر، طلا و جواهرات، کافه، رستوران، لوازم و خدمات الکترونیکی، عینک و... را پوشش میدهد.")
+            Text(text = "در حال حاضر تخفیف داره به صورت گسترده در سطح تهران، کرج و سمنان اصناف مختلف را نظیر پوشاک، استخر، طلا و جواهرات، کافه، رستوران، لوازم و خدمات الکترونیکی، عینک و... را پوشش میدهد.", textAlign = TextAlign.Center)
             Spacer(modifier = Modifier.height(10.dp))
-            Text(text = "وسعت فعالیت تخفیف داره فقط محدود به کالا ها نیست بلکه گستردگی این مجموعه در زمینه های مختلف خدماتی و درمانی مانند: دندان پزشکی، کلینیک های زیبایی، آرایشگاه ها و... نیز است.")
+            Text(text = "وسعت فعالیت تخفیف داره فقط محدود به کالا ها نیست بلکه گستردگی این مجموعه در زمینه های مختلف خدماتی و درمانی مانند: دندان پزشکی، کلینیک های زیبایی، آرایشگاه ها و... نیز است.", textAlign = TextAlign.Center)
             
         }
     }
@@ -139,7 +134,7 @@ fun Page2() {
         Column(modifier = Modifier
             .padding(start = 20.dp, end = 15.dp)
             .fillMaxHeight(.6f), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "در تخفیف داره میتوانید فقط با خرید یک کوپن، کالا های مورد نظر خودتان را تا سقف ۸۰٪ خریداری کنید.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "در تخفیف داره میتوانید فقط با خرید یک کوپن، کالا های مورد نظر خودتان را تا سقف ۸۰٪ خریداری کنید.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
         }
     }
 }
@@ -152,7 +147,7 @@ fun Page3() {
         Column(modifier = Modifier
             .padding(start = 20.dp, end = 15.dp)
             .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "در پنل شما امکان خرید سه نوع کارت فراهم شده است که هر کدام از کارت ها دارای تعداد مختلفی کوپن تخفیف هستند.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "در پنل شما امکان خرید سه نوع کارت فراهم شده است که هر کدام از کارت ها دارای تعداد مختلفی کوپن تخفیف هستند.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold, textAlign = TextAlign.Center)
         }
     }
 }
@@ -166,7 +161,7 @@ fun Page4() {
         Column(modifier = Modifier
             .padding(start = 20.dp, end = 15.dp)
             .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "تخفیف داره، بدون محدودیت مکانی خدمات خود را با پوشش دهی در سطح تهران و کرج به شما ارایه میدهد.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "تخفیف داره، بدون محدودیت مکانی خدمات خود را با پوشش دهی در سطح تهران و کرج به شما ارایه میدهد.", textAlign = TextAlign.Center, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -180,7 +175,7 @@ fun Page5() {
         Column(modifier = Modifier
             .padding(start = 20.dp, end = 15.dp)
             .fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Text(text = "کوپن های تخفیف داره محدودیت زمانی ندارند، بنابراین بعد از خرید، شما میتوانید در هر زمانی که مایل بودید از کد تخفیف خود استفاده کنید.", fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
+            Text(text = "کوپن های تخفیف داره محدودیت زمانی ندارند، بنابراین بعد از خرید، شما میتوانید در هر زمانی که مایل بودید از کد تخفیف خود استفاده کنید.", textAlign = TextAlign.Center, fontSize = 18.sp, fontWeight = FontWeight.SemiBold)
             Spacer(modifier = Modifier.height(60.dp))
             Button(
                 onClick = {
@@ -188,7 +183,7 @@ fun Page5() {
                           },
                 shape = RoundedCornerShape(20.dp)
                 ) {
-                Text(text = "ورود", fontSize = 20.sp)
+                Text(text = "ورود / ثبت نام", fontSize = 20.sp)
             }
         
         }

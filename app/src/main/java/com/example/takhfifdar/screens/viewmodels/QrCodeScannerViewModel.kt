@@ -41,7 +41,7 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                     database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value!!)
                     Navigator.navigateTo(
                         navTarget = NavTarget.FeedbackScreen,
-                        args = vendorObj.toString() + "~" + req.body()?.storeImage?.replace("/", "*")
+                        args = vendorObj.toString() + "~" + req.body()?.storeImage?.replace("/", "*") + "~" + req.body()?.discount
                     )
                 } else {
                     if (req.code() >= 500) {

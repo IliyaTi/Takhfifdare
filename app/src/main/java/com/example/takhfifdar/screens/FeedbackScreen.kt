@@ -1,5 +1,6 @@
 package com.example.takhfifdar.screens
 
+import android.graphics.Paint.Align
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -30,12 +31,15 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.bumptech.glide.integration.compose.ExperimentalGlideComposeApi
 import com.bumptech.glide.integration.compose.GlideImage
 import com.example.takhfifdar.R
@@ -43,6 +47,10 @@ import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.classes.RatingItem
 import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
+import com.example.takhfifdar.util.NumberUnicodeAdapter
+import com.example.takhfifdar.views.CalcDataItem
+import com.example.takhfifdar.views.CalculatorItem
+import com.example.takhfifdar.views.calculate
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -53,14 +61,17 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
     var vendorId by remember { mutableStateOf(0) }
     var vendorName by remember { mutableStateOf("") }
     var vendorPic by remember { mutableStateOf("") }
+    var discount by remember { mutableStateOf("") }
+    var calcState by remember { mutableStateOf(true) }
 
     LaunchedEffect(key1 = true) {
         val vendorObj = JSONObject(vendor.split("~")[0])
         try {
             vendorPic = vendor.split("~")[1].replace("*", "/")
-        } catch (e: Exception){
+        } catch (e: Exception) {
             Log.e("FEEDBACKSCREEN", "picture path does not exist!")
         }
+        discount = NumberUnicodeAdapter().convert(vendor.split("~")[2])
         vendorId = vendorObj.getInt("id")
         vendorName = vendorObj.getString("username")
     }
@@ -77,7 +88,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
         val topPart = createRefFor("topPart")
 //        val logo = createRefFor("logo")
 //        val vendorName = createRefFor("name")
-        val rating = createRefFor("rating")
+
         val tabs = createRefFor("tabs")
 //        val close = createRefFor("close")
 
@@ -87,38 +98,32 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
             end.linkTo(parent.end)
         }
 
-        constrain(rating) {
-            top.linkTo(topPart.bottom)
-            start.linkTo(parent.start)
-            end.linkTo(parent.end)
-        }
-
         constrain(tabs) {
             height = Dimension.fillToConstraints
-            top.linkTo(rating.bottom)
+            top.linkTo(topPart.bottom)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }
 
     }
-    
+
     val topSet = ConstraintSet {
         val bar = createRefFor("bar")
         val vendrName = createRefFor("name")
         val image = createRefFor("image")
-        
+
         constrain(bar) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             top.linkTo(parent.top)
         }
-        
+
         constrain(vendrName) {
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }
-        
+
         constrain(image) {
             height = Dimension.fillToConstraints
             top.linkTo(parent.top)
@@ -132,17 +137,26 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
         val tabs = createRefFor("tabs")
         val content = createRefFor("content")
         val submit = createRefFor("submit")
+        val rating = createRefFor("rating")
 
-        constrain(tabs) {
+        constrain(rating) {
             top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
+
+        constrain(tabs) {
+            top.linkTo(rating.bottom)
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+        }
+
         constrain(submit) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             bottom.linkTo(parent.bottom)
         }
+
         constrain(content) {
             height = Dimension.fillToConstraints
             width = Dimension.fillToConstraints
@@ -157,10 +171,12 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
 
 //    if (!viewModel.qrScannerError.value)
     ConstraintLayout(wholeSet, modifier = Modifier.fillMaxSize()) {
-        
-        ConstraintLayout(topSet, modifier = Modifier
-            .layoutId("topPart")
-            .height(200.dp)) {
+
+        ConstraintLayout(
+            topSet, modifier = Modifier
+                .layoutId("topPart")
+                .height(200.dp)
+        ) {
 
             GlideImage(
                 model = vendorPic,
@@ -169,9 +185,18 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                 contentScale = ContentScale.Crop
             )
 
-            Row(modifier = Modifier.fillMaxWidth().layoutId("bar").background(Brush.verticalGradient(
-                listOf(Color.White, Color.Transparent)
-            )), horizontalArrangement = Arrangement.SpaceBetween) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .layoutId("bar")
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.White, Color.Transparent)
+                        )
+                    ),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
 
                 Image(
                     painter = painterResource(id = R.drawable.logo),
@@ -181,24 +206,41 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         .padding(start = 6.dp, top = 12.dp)
                 )
 
-                IconButton(onClick = { Navigator.navigateTo(NavTarget.HomeScreen) }, modifier = Modifier
-                    .padding(end = 6.dp, top = 6.dp)) {
-                    Icon(imageVector = Icons.Default.Close, contentDescription = "", modifier = Modifier)
+                Row(modifier = Modifier, verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "تخفیف $discount درصد",
+                        fontSize = 18.sp,
+                        modifier = Modifier.padding(top = 6.dp)
+                    )
+                    IconButton(
+                        onClick = { Navigator.navigateTo(NavTarget.HomeScreen) },
+                        modifier = Modifier
+                            .padding(end = 6.dp, top = 6.dp)
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "",
+                            modifier = Modifier
+                        )
+                    }
                 }
+
             }
 
 
 
-            Box(modifier = Modifier
-                .layoutId("name")
-                .fillMaxWidth()
-                .background(
-                    Brush.verticalGradient(
-                        listOf(Color.Transparent, Color.White),
-                        tileMode = TileMode.Decal
+            Box(
+                modifier = Modifier
+                    .layoutId("name")
+                    .fillMaxWidth()
+                    .background(
+                        Brush.verticalGradient(
+                            listOf(Color.Transparent, Color.White),
+                            tileMode = TileMode.Decal
+                        )
                     )
-                )) {
-                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl ) {
+            ) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
                     Text(
                         text = vendorName,
                         fontSize = 28.sp, fontWeight = FontWeight.Bold,
@@ -214,72 +256,84 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
 
         }
 
-        
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(100.dp)
-                .padding(horizontal = 25.dp, vertical = 18.dp)
-                .layoutId("rating"),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
 
-            for (i in 1..5) {
-                val rateAnimation = animateDpAsState(
-                    targetValue = if (viewModel.selectedRate.value == i) 60.dp else 48.dp,
-                    animationSpec = spring(Spring.DampingRatioHighBouncy, stiffness = Spring.StiffnessMedium),
-                )
-                Image(
-                    painter = painterResource(ratingOptions[i - 1].imgRes),
-                    contentDescription = "",
-                    colorFilter = ColorFilter.tint(if (viewModel.selectedRate.value == i) ratingOptions[i - 1].color else Color.Gray),
+        // TODO
+        if (!calcState) {
+            ConstraintLayout(modifier = Modifier.layoutId("tabs"), constraintSet = tabsSet) {
+
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .clickable(
-                            interactionSource = remember { MutableInteractionSource() },
-                            indication = null
-                        ) { viewModel.selectedRate.value = i }
-                        .size(rateAnimation.value)
-                )
-            }
-        }
+                        .fillMaxWidth()
+                        .height(100.dp)
+                        .padding(horizontal = 25.dp, vertical = 18.dp)
+                        .layoutId("rating"),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
 
-        ConstraintLayout(modifier = Modifier.layoutId("tabs"), constraintSet = tabsSet) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .layoutId("tabs"),
-            ) {
-                OutlinedButton(
-                    onClick = { viewModel.selectedTab.value = 1 },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (viewModel.selectedTab.value == 1) Color(
-                            0xffE5E5E5
-                        ) else Color(0xffF2F2F2)
-                    ),
-                    shape = RoundedCornerShape(topStart = 20.dp),
-                    border = BorderStroke(0.dp, Color(0xffffffff)),
-                    elevation = ButtonDefaults.elevation()
-                ) {
-                    Text(text = "نظرات منفی", fontSize = 24.sp)
+                    for (i in 1..5) {
+                        val rateAnimation = animateDpAsState(
+                            targetValue = if (viewModel.selectedRate.value == i) 60.dp else 48.dp,
+                            animationSpec = spring(
+                                Spring.DampingRatioHighBouncy,
+                                stiffness = Spring.StiffnessMedium
+                            ),
+                        )
+                        Image(
+                            painter = painterResource(ratingOptions[i - 1].imgRes),
+                            contentDescription = "",
+                            colorFilter = ColorFilter.tint(if (viewModel.selectedRate.value == i) ratingOptions[i - 1].color else Color.Gray),
+                            modifier = Modifier
+                                .weight(1f)
+                                .clickable(
+                                    interactionSource = remember { MutableInteractionSource() },
+                                    indication = null
+                                ) {
+                                    if (i == 1) {
+                                        viewModel.selectedTab.value = 2
+                                    } else if (i == 5) {
+                                        viewModel.selectedTab.value = 1
+                                    }
+                                    viewModel.selectedRate.value = i
+                                }
+                                .size(rateAnimation.value)
+                        )
+                    }
                 }
-                OutlinedButton(
-                    onClick = { viewModel.selectedTab.value = 2; },
-                    modifier = Modifier.weight(1f),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (viewModel.selectedTab.value == 1) Color(
-                            0xffF2F2F2
-                        ) else Color(0xffE5E5E5)
-                    ),
-                    shape = RoundedCornerShape(topEnd = 20.dp),
-                    border = BorderStroke(0.dp, Color(0xffffffff)),
-                    elevation = ButtonDefaults.elevation()
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .layoutId("tabs"),
                 ) {
-                    Text(text = "نظرات مثبت", fontSize = 24.sp)
+                    OutlinedButton(
+                        onClick = { viewModel.selectedTab.value = 1 },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedTab.value == 1) Color(
+                                0xffE5E5E5
+                            ) else Color(0xffF2F2F2)
+                        ),
+                        shape = RoundedCornerShape(topStart = 20.dp),
+                        border = BorderStroke(0.dp, Color(0xffffffff)),
+                        elevation = ButtonDefaults.elevation()
+                    ) {
+                        Text(text = "نظرات منفی", fontSize = 24.sp)
+                    }
+                    OutlinedButton(
+                        onClick = { viewModel.selectedTab.value = 2; },
+                        modifier = Modifier.weight(1f),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = if (viewModel.selectedTab.value == 1) Color(
+                                0xffF2F2F2
+                            ) else Color(0xffE5E5E5)
+                        ),
+                        shape = RoundedCornerShape(topEnd = 20.dp),
+                        border = BorderStroke(0.dp, Color(0xffffffff)),
+                        elevation = ButtonDefaults.elevation()
+                    ) {
+                        Text(text = "نظرات مثبت", fontSize = 24.sp)
+                    }
                 }
-            }
-            /** Negative feedback page : START **/
+                /** Negative feedback page : START **/
                 AnimatedVisibility(
                     visible = viewModel.selectedTab.value == 1,
                     modifier = Modifier.layoutId("content"),
@@ -308,7 +362,10 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(6.dp)
                                     ) {
-                                        Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
+                                        Text(
+                                            text = viewModel.negFeedBack[i].first,
+                                            fontSize = 14.sp
+                                        )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Checkbox(
                                             colors = CheckboxDefaults.colors(
@@ -341,7 +398,10 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         verticalAlignment = Alignment.CenterVertically,
                                         modifier = Modifier.padding(6.dp)
                                     ) {
-                                        Text(text = viewModel.negFeedBack[i].first, fontSize = 14.sp)
+                                        Text(
+                                            text = viewModel.negFeedBack[i].first,
+                                            fontSize = 14.sp
+                                        )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Checkbox(
                                             checked = viewModel.negFeedBack[i].second,
@@ -365,154 +425,193 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                     }
                 }
 
-            /** Negative feedback page : END **/
-            /** POSITIVE feedback page : START **/
+                /** Negative feedback page : END **/
+                /** POSITIVE feedback page : START **/
 
-            AnimatedVisibility(
-                visible = viewModel.selectedTab.value == 2,
-                modifier = Modifier.layoutId("content"),
-                enter = slideInHorizontally() { 1050 },
-                exit = slideOutHorizontally() { 1050 }
-            ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxSize()
-//                        .layoutId("content")
-                        .background(Color(0xffE5E5E5))
+                AnimatedVisibility(
+                    visible = viewModel.selectedTab.value == 2,
+                    modifier = Modifier.layoutId("content"),
+                    enter = slideInHorizontally() { 1050 },
+                    exit = slideOutHorizontally() { 1050 }
                 ) {
-                    Row(
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                        modifier = Modifier.padding(vertical = 20.dp)
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+//                        .layoutId("content")
+                            .background(Color(0xffE5E5E5))
                     ) {
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.End,
-                            modifier = Modifier.weight(1f)
+                        Row(
+                            horizontalArrangement = Arrangement.Center,
+                            verticalAlignment = Alignment.CenterVertically,
+                            modifier = Modifier.padding(vertical = 20.dp)
                         ) {
-                            for (i in 0..3) {
-                                Row(
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(6.dp)
-                                ) {
-                                    Text(text = viewModel.posFeedBack[i].first, fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Checkbox(
-                                        checked = viewModel.posFeedBack[i].second,
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = Color(
-                                                0xff009245
-                                            )
-                                        ),
-                                        onCheckedChange = {
-                                            viewModel.posFeedBack[i] = Pair(
-                                                viewModel.posFeedBack[i].first,
-                                                !viewModel.posFeedBack[i].second
-                                            )
-                                        },
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                            Column(
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                for (i in 0..3) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(6.dp)
+                                    ) {
+                                        Text(
+                                            text = viewModel.posFeedBack[i].first,
+                                            fontSize = 14.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Checkbox(
+                                            checked = viewModel.posFeedBack[i].second,
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = Color(
+                                                    0xff009245
+                                                )
+                                            ),
+                                            onCheckedChange = {
+                                                viewModel.posFeedBack[i] = Pair(
+                                                    viewModel.posFeedBack[i].first,
+                                                    !viewModel.posFeedBack[i].second
+                                                )
+                                            },
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
-                        }
-                        Column(
-                            verticalArrangement = Arrangement.SpaceEvenly,
-                            horizontalAlignment = Alignment.End,
-                            modifier = Modifier
-                                .weight(1f)
-                                .padding(end = 6.dp)
-                        ) {
-                            for (i in 4..7) {
-                                Row(
-                                    horizontalArrangement = Arrangement.Center,
-                                    verticalAlignment = Alignment.CenterVertically,
-                                    modifier = Modifier.padding(6.dp)
-                                ) {
-                                    Text(text = viewModel.posFeedBack[i].first, fontSize = 14.sp)
-                                    Spacer(modifier = Modifier.width(12.dp))
-                                    Checkbox(
-                                        checked = viewModel.posFeedBack[i].second,
-                                        colors = CheckboxDefaults.colors(
-                                            checkedColor = Color(
-                                                0xff009245
-                                            )
-                                        ),
-                                        onCheckedChange = {
-                                            viewModel.posFeedBack[i] = Pair(
-                                                viewModel.posFeedBack[i].first,
-                                                !viewModel.posFeedBack[i].second
-                                            )
-                                        },
-                                        modifier = Modifier.size(20.dp)
-                                    )
+                            Column(
+                                verticalArrangement = Arrangement.SpaceEvenly,
+                                horizontalAlignment = Alignment.End,
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .padding(end = 6.dp)
+                            ) {
+                                for (i in 4..7) {
+                                    Row(
+                                        horizontalArrangement = Arrangement.Center,
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        modifier = Modifier.padding(6.dp)
+                                    ) {
+                                        Text(
+                                            text = viewModel.posFeedBack[i].first,
+                                            fontSize = 14.sp
+                                        )
+                                        Spacer(modifier = Modifier.width(12.dp))
+                                        Checkbox(
+                                            checked = viewModel.posFeedBack[i].second,
+                                            colors = CheckboxDefaults.colors(
+                                                checkedColor = Color(
+                                                    0xff009245
+                                                )
+                                            ),
+                                            onCheckedChange = {
+                                                viewModel.posFeedBack[i] = Pair(
+                                                    viewModel.posFeedBack[i].first,
+                                                    !viewModel.posFeedBack[i].second
+                                                )
+                                            },
+                                            modifier = Modifier.size(20.dp)
+                                        )
+                                    }
                                 }
                             }
                         }
                     }
                 }
-            }
 
-            /** POSITIVE feedback page : END **/
+                /** POSITIVE feedback page : END **/
 
-            Row(
-                modifier = Modifier
-                    .layoutId("submit")
-                    .background(Color(0xffE5E5E5)),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                OutlinedButton(
+                Row(
                     modifier = Modifier
-                        .weight(1f)
-                        .padding(start = 20.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = Color(0xffE5E5E5),
-                        contentColor = Color(0xff009245)
-                    ),
-                    onClick = { viewModel.openDialog.value = true }
+                        .layoutId("submit")
+                        .background(Color(0xffE5E5E5)),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Text(text = "ثبت نظر", style = MaterialTheme.typography.h6)
-                }
-                Button(
-                    modifier = Modifier
-                        .weight(2f)
-                        .padding(20.dp),
-                    colors = ButtonDefaults.buttonColors(Color(0xff009245)),
-                    onClick = {
-                        scope.launch {
-                            if (viewModel.selectedRate.value != 0) {
-                                viewModel.sendFeedback(vendorId, vendorName)
-                            } else {
-                                Toast.makeText(
-                                    context,
-                                    "لطفا میزان رضایت خود را مشخص کنید",
-                                    Toast.LENGTH_LONG
-                                ).show()
+                    OutlinedButton(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 20.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            backgroundColor = Color(0xffE5E5E5),
+                            contentColor = Color(0xff009245)
+                        ),
+                        onClick = { viewModel.openDialog.value = true }
+                    ) {
+                        Text(text = "ثبت نظر", style = MaterialTheme.typography.h6)
+                    }
+                    Button(
+                        modifier = Modifier
+                            .weight(2f)
+                            .padding(20.dp),
+                        colors = ButtonDefaults.buttonColors(Color(0xff009245)),
+                        onClick = {
+                            scope.launch {
+                                if (viewModel.selectedRate.value != 0) {
+                                    viewModel.sendFeedback(vendorId, vendorName)
+                                } else {
+                                    Toast.makeText(
+                                        context,
+                                        "لطفا میزان رضایت خود را مشخص کنید",
+                                        Toast.LENGTH_LONG
+                                    ).show()
+                                }
                             }
-                        }
-                    },
-                    enabled = !viewModel.loadingState.value
-                ) {
-                    if (!viewModel.loadingState.value)
-                        Text(
-                            text = "ثبت بازخورد",
-                            color = Color.White,
-                            style = MaterialTheme.typography.h6
-                        )
-                    else
-                        CircularProgressIndicator(
-                            strokeWidth = 2.dp,
-                            modifier = Modifier.size(30.dp)
-                        )
+                        },
+                        enabled = !viewModel.loadingState.value
+                    ) {
+                        if (!viewModel.loadingState.value)
+                            Text(
+                                text = "ثبت بازخورد",
+                                color = Color.White,
+                                style = MaterialTheme.typography.h6
+                            )
+                        else
+                            CircularProgressIndicator(
+                                strokeWidth = 2.dp,
+                                modifier = Modifier.size(30.dp)
+                            )
+                    }
                 }
+            }
+        } else {
+            Column(
+                modifier = Modifier
+                    .layoutId("tabs")
+            ) {
+
+                val calcContent = remember { mutableStateOf(listOf(CalcDataItem())) }
+
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "قیمت اصلی",
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "درصد تخفیف",
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
+                    Text(
+                        text = "قیمت نهایی",
+                        modifier = Modifier.weight(1f),
+                        textAlign = TextAlign.Center
+                    )
+                }
+
+
+//                Row(modifier = Modifier.fillMaxWidth()) {
+//                    OutlinedTextField(value = calcContent.value[0].price, onValueChange = {  }, modifier = Modifier.weight(1f))
+//                    OutlinedTextField(value = calcContent.value[0].discount, onValueChange = {  }, modifier = Modifier.weight(1f))
+//                    Text(text = calcContent.value[0].total, modifier = Modifier.weight(1f))
+//                }
+
+                CalculatorItem(iteration = 0, state = calcContent)
+
             }
         }
     }
-//    else
-//        Column(modifier = Modifier.fillMaxSize()) {
-//            Icon(imageVector = Icons.Default.QrCode2, contentDescription = "")
-//            Text(text = "کد اسکن شده معتبر نمیباشد")
-//        }
+
 
     if (viewModel.openDialog.value) {
 
@@ -567,6 +666,16 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
             .clickable { })
     }
 
+}
+
+
+@Preview
+@Composable
+fun FeedbackScreenPrev() {
+    FeedbackScreen(
+        vendor = "{'id':10,'username':'نام فروشگاه'}",
+        viewModel = viewModel<FeedbackScreenViewModel>()
+    )
 }
 
 val ratingOptions: List<RatingItem> = listOf(

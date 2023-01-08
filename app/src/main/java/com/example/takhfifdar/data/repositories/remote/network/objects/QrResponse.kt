@@ -6,5 +6,6 @@ import com.google.gson.annotations.SerializedName
 data class QrResponse(
     val user: User,
     @SerializedName("store_image")
-    val storeImage: String?
+    val storeImage: String?,
+    val discount: String
 )
