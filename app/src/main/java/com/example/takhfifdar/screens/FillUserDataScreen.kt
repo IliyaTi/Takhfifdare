@@ -6,6 +6,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.Button
 import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
@@ -19,6 +20,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -137,6 +139,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 OutlinedTextField(
                     value = viewModel.phoneNumber.value ?: "",
                     onValueChange = { viewModel.phoneNumber.value = it },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Phone),
                     label = {
                         Row {
                             Text(text = "شماره تلفن")
@@ -153,6 +156,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 OutlinedTextField(
                     value = viewModel.email.value ?: "",
                     onValueChange = { viewModel.email.value = it },
+                    keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Email),
                     label = { Text(text = "ایمیل") },
                     modifier = Modifier.fillMaxWidth()
                 )

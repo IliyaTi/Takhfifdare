@@ -1,6 +1,5 @@
 package com.example.takhfifdar.screens
 
-import android.graphics.Paint.Align
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
@@ -17,6 +16,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -31,6 +31,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -48,9 +49,8 @@ import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.classes.RatingItem
 import com.example.takhfifdar.screens.viewmodels.FeedbackScreenViewModel
 import com.example.takhfifdar.util.NumberUnicodeAdapter
-import com.example.takhfifdar.views.CalcDataItem
-import com.example.takhfifdar.views.CalculatorItem
-import com.example.takhfifdar.views.calculate
+import com.example.takhfifdar.views.calculateDiscount
+import com.example.takhfifdar.views.calculateTotal
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 
@@ -82,6 +82,19 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
     BackHandler {
         Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
     }
+
+    val rowOnePrice = remember { mutableStateOf("") }
+    val rowTwoPrice = remember { mutableStateOf("") }
+    val rowThreePrice = remember { mutableStateOf("") }
+    val rowFourPrice = remember { mutableStateOf("") }
+    val rowOneDiscount = remember { mutableStateOf("") }
+    val rowTwoDiscount = remember { mutableStateOf("") }
+    val rowThreeDiscount = remember { mutableStateOf("") }
+    val rowFourDiscount = remember { mutableStateOf("") }
+    val rowOneTotal = remember { mutableStateOf("") }
+    val rowTwoTotal = remember { mutableStateOf("") }
+    val rowThreeTotal = remember { mutableStateOf("") }
+    val rowFourTotal = remember { mutableStateOf("") }
 
 
     val wholeSet = ConstraintSet {
@@ -260,6 +273,10 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
         // TODO
         if (!calcState) {
             ConstraintLayout(modifier = Modifier.layoutId("tabs"), constraintSet = tabsSet) {
+
+                BackHandler {
+                    calcState = true
+                }
 
                 Row(
                     modifier = Modifier
@@ -576,39 +593,205 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
         } else {
             Column(
                 modifier = Modifier
-                    .layoutId("tabs")
+                    .layoutId("tabs"),
+                verticalArrangement = Arrangement.SpaceBetween
             ) {
 
-                val calcContent = remember { mutableStateOf(listOf(CalcDataItem())) }
+                Column {
+                    
+                    Row(
+                        Modifier
+                            .fillMaxWidth()
+                            .padding(top = 10.dp), verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "قیمت اصلی",
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "درصد تخفیف",
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                        Text(
+                            text = "قیمت نهایی",
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
 
-                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-                    Text(
-                        text = "قیمت اصلی",
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "درصد تخفیف",
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
-                    Text(
-                        text = "قیمت نهایی",
-                        modifier = Modifier.weight(1f),
-                        textAlign = TextAlign.Center
-                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = rowOnePrice.value,
+                            onValueChange = {
+
+                                rowOnePrice.value = it.filter { it.isDigit() }
+                                rowOneTotal.value =
+                                    calculateDiscount(rowOnePrice.value, rowOneDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        OutlinedTextField(
+                            value = rowOneDiscount.value,
+                            onValueChange = {
+                                rowOneDiscount.value = it.filter { it.isDigit() }
+                                rowOneTotal.value =
+                                    calculateDiscount(rowOnePrice.value, rowOneDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        Text(
+                            text = rowOneTotal.value,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = rowTwoPrice.value,
+                            onValueChange = {
+                                rowTwoPrice.value = it.filter { it.isDigit() }
+                                rowTwoTotal.value =
+                                    calculateDiscount(rowTwoPrice.value, rowTwoDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        OutlinedTextField(
+                            value = rowTwoDiscount.value,
+                            onValueChange = {
+                                rowTwoDiscount.value = it.filter { it.isDigit() }
+                                rowTwoTotal.value =
+                                    calculateDiscount(rowTwoPrice.value, rowTwoDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        Text(
+                            text = rowTwoTotal.value,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = rowThreePrice.value,
+                            onValueChange = {
+                                rowThreePrice.value = it.filter { it.isDigit() }
+                                rowThreeTotal.value =
+                                    calculateDiscount(rowThreePrice.value, rowThreeDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        OutlinedTextField(
+                            value = rowThreeDiscount.value,
+                            onValueChange = {
+                                rowThreeDiscount.value = it.filter { it.isDigit() }
+                                rowThreeTotal.value =
+                                    calculateDiscount(rowThreePrice.value, rowThreeDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        Text(
+                            text = rowThreeTotal.value,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        OutlinedTextField(
+                            value = rowFourPrice.value,
+                            onValueChange = {
+                                rowFourPrice.value = it.filter { it.isDigit() }
+                                rowFourTotal.value =
+                                    calculateDiscount(rowFourPrice.value, rowFourDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        OutlinedTextField(
+                            value = rowFourDiscount.value,
+                            onValueChange = {
+                                rowFourDiscount.value = it.filter { it.isDigit() }
+                                rowFourTotal.value =
+                                    calculateDiscount(rowFourPrice.value, rowFourDiscount.value)
+                            },
+                            keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number),
+                            modifier = Modifier
+                                .weight(1f)
+                                .padding(4.dp)
+                        )
+                        Text(
+                            text = rowFourTotal.value,
+                            modifier = Modifier.weight(1f),
+                            textAlign = TextAlign.Center
+                        )
+                    }
+
+                    Divider(modifier = Modifier.padding(vertical = 12.dp))
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Box(modifier = Modifier.weight(1f))
+                        Text(text = "جمع کل", modifier = Modifier.weight(1f))
+                        Text(
+                            text = calculateTotal(
+                                rowOneTotal.value,
+                                rowTwoTotal.value,
+                                rowThreeTotal.value,
+                                rowFourTotal.value
+                            ), modifier = Modifier.padding(end = 12.dp)
+                        )
+                    }
+
+
+
+
                 }
-
-
-//                Row(modifier = Modifier.fillMaxWidth()) {
-//                    OutlinedTextField(value = calcContent.value[0].price, onValueChange = {  }, modifier = Modifier.weight(1f))
-//                    OutlinedTextField(value = calcContent.value[0].discount, onValueChange = {  }, modifier = Modifier.weight(1f))
-//                    Text(text = calcContent.value[0].total, modifier = Modifier.weight(1f))
-//                }
-
-                CalculatorItem(iteration = 0, state = calcContent)
-
+                Button(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1f, false)
+                        .padding(20.dp),
+                    onClick = { calcState = false }
+                ) {
+                    Text(text = "ادامه")
+                }
             }
+
         }
     }
 

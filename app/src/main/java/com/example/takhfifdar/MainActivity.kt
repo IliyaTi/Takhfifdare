@@ -99,7 +99,7 @@ fun NavigationComponent(
     NavHost(navController = navController, startDestination = "SplashScreen") {
 
         composable("HomeScreen") {
-            HomeScreen(activity, launcher, viewModel<HomeScreenViewModel>(factory = HomeScreenViewModelFactory(TakhfifdareApplication(), launcher, activity)))
+            HomeScreen(activity, viewModel<HomeScreenViewModel>(factory = HomeScreenViewModelFactory(TakhfifdareApplication(), launcher, activity)))
         }
 
         composable("FillUserDataScreen") {

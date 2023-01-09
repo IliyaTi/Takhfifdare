@@ -1,6 +1,8 @@
 package com.example.takhfifdar.screens
 
 import android.app.Activity
+import android.content.Context
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
@@ -27,6 +29,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.example.takhfifdar.R
+import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.google.accompanist.pager.ExperimentalPagerApi
@@ -35,7 +38,7 @@ import com.google.accompanist.pager.rememberPagerState
 
 @OptIn(ExperimentalPagerApi::class)
 @Composable
-fun AboutUs() {
+fun AboutUs(context: Context) {
 
     val set = ConstraintSet {
         val content = createRefFor("content")
@@ -68,7 +71,7 @@ fun AboutUs() {
                     2 -> Page2()
                     3 -> Page3()
                     4 -> Page4()
-                    5 -> Page5()
+                    5 -> Page5(context)
                 }
             }
         }
@@ -167,7 +170,7 @@ fun Page4() {
 }
 
 @Composable
-fun Page5() {
+fun Page5(context: Context) {
     Column(modifier = Modifier.fillMaxSize(), horizontalAlignment = Alignment.CenterHorizontally) {
         Image(painter = painterResource(id = R.drawable.slide5), contentDescription = "", modifier = Modifier
             .padding(top = 60.dp)
@@ -179,7 +182,11 @@ fun Page5() {
             Spacer(modifier = Modifier.height(60.dp))
             Button(
                 onClick = {
-                          Navigator.navigateTo(NavTarget.LoginScreen)
+                        if (TakhfifdareApplication.loggedInUser.value == null) {
+                            Navigator.navigateTo(NavTarget.LoginScreen)
+                        } else {
+                            Toast.makeText(context, "شما وارد شده اید", Toast.LENGTH_SHORT).show()
+                        }
                           },
                 shape = RoundedCornerShape(20.dp)
                 ) {

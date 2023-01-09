@@ -49,7 +49,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun HomeScreen(
     context: Activity,
-    launcher: ManagedActivityResultLauncher<String, Boolean>,
     viewModel: HomeScreenViewModel
 ) {
     val scope = rememberCoroutineScope()
@@ -136,27 +135,33 @@ fun HomeScreen(
         },
         backLayerContent = {
             if (TakhfifdareApplication.loggedInUser.value == null) {
-                BackdropMenuItem(title = "ورود", icon = Icons.Filled.Login) {
+                BackdropMenuItem(title = "ورود/ثبت نام", icon = Icons.Filled.Login) {
                     Navigator.navigateTo(NavTarget.LoginScreen)
                 }
             } else {
-                BackdropMenuItem(title = "خروچ", icon = Icons.Filled.Logout) {
+                BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
+                    homeScreenNavController.navigate("tapToScan") {
+                        launchSingleTop = true
+                        homeScreenNavController.popBackStack()
+                    }
+                    scope.launch { backdropState.conceal() }
+                }
+                BackdropMenuItem(title = "خروج", icon = Icons.Filled.Logout) {
                     scope.launch {
                         viewModel.signOut()
                         backdropState.conceal()
                     }
                 }
-                BackdropMenuItem(title = "تنظیمات کاربر", icon = Icons.Filled.Settings) {
+                BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
                     Navigator.navigateTo(NavTarget.FillUserDataScreen)
                 }
             }
-            BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
-                homeScreenNavController.navigate("tapToScan") {
-                    launchSingleTop = true
-                    homeScreenNavController.popBackStack()
-                }
-                scope.launch { backdropState.conceal() }
+
+            BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Storefront) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
+                context.startActivity(intent)
             }
+
 
             BackdropMenuItem(title = "درباره", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
@@ -173,7 +178,7 @@ fun HomeScreen(
                 modifier = Modifier.fillMaxSize()
             ) {
                 composable("aboutUs") {
-                    AboutUs()
+                    AboutUs(context)
                 }
                 composable("tapToScan") {
                     TapToScan(viewModel = viewModel)
