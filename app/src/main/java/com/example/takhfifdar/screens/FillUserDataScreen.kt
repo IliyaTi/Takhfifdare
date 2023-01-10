@@ -1,18 +1,16 @@
 package com.example.takhfifdar.screens
 
+import android.view.RoundedCorner
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.Button
-import androidx.compose.material.CircularProgressIndicator
-import androidx.compose.material.OutlinedTextField
-import androidx.compose.material.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.material.*
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -33,17 +31,8 @@ import com.example.takhfifdar.screens.viewmodels.FillUserDataScreenViewModel
 @Composable()
 fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
 
-    // Loading indicator
-    if (viewModel.loadingState.value)
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .background(Color(0x80000000)),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
-        ) {
-            CircularProgressIndicator()
-        }
+    var monthPickerExp by remember { mutableStateOf(false) }
+
 
     val set = ConstraintSet {
         val header = createRefFor("header")
@@ -83,7 +72,8 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
             val scrollState = rememberScrollState()
 
             Column(
-                modifier = Modifier.layoutId("form")
+                modifier = Modifier
+                    .layoutId("form")
                     .scrollable(
                         state = scrollState,
                         orientation = Orientation.Vertical
@@ -177,21 +167,49 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     color = Color.Red
                 )
 
-                OutlinedTextField(
-                    value = viewModel.birthDate.value ?: "",
-                    onValueChange = { viewModel.birthDate.value = it },
-                    label = {
-                        Row {
-                            Text(text = "تاریخ تولد")
-                            Text(text = "*", color = Color.Red)
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween
+                ) {
+                    Row (modifier = Modifier.weight(1f)){
+                        Text(text = "تاریخ تولد")
+                        Text(text = "*", color = Color.Red)
+                    }
+
+                    OutlinedTextField(
+                        value = viewModel.dayPicker.value ?: "",
+                        onValueChange = { viewModel.dayPicker.value = it },
+                        label = { Text("روز") },
+                        modifier = Modifier.weight(1f)
+                    )
+                    Box {
+                        OutlinedButton(onClick = { monthPickerExp = !monthPickerExp }, Modifier.height(IntrinsicSize.Max)) {
+                            Text(text = viewModel.monthPicker.value)
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
-                if (!viewModel.birthDateValid.value.first) Text(
-                    text = viewModel.birthDateValid.value.second,
-                    color = Color.Red
-                )
+                        DropdownMenu(
+                            expanded = monthPickerExp,
+                            onDismissRequest = { monthPickerExp = false }) {
+                            viewModel.months.forEach { label ->
+                                DropdownMenuItem(onClick = {
+                                    monthPickerExp = false
+                                    viewModel.monthPicker.value = label
+                                }) {
+                                    Text(text = label)
+                                }
+                            }
+                        }
+                    }
+                    OutlinedTextField(
+                        value = viewModel.yearPicker.value ?: "",
+                        onValueChange = { viewModel.yearPicker.value = it },
+                        modifier = Modifier.weight(1f),
+                        label = {
+                            Text(text = "سال")
+                        })
+
+                }
+                if (!viewModel.birthDateValid.value.first) Text(viewModel.birthDateValid.value.second, color = Color.Red)
 
             }
 
@@ -206,6 +224,19 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
             ) {
                 Text(text = "ثبت اطلاعات", fontSize = 16.sp)
             }
+
+            // Loading indicator
+            if (viewModel.loadingState.value)
+                Column(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color(0x80000000)),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center
+                ) {
+                    CircularProgressIndicator()
+                }
+
         }
     }
 }

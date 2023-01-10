@@ -27,12 +27,14 @@ fun CalculatorItem(
 fun calculateDiscount(price: String, discount: String): String {
     Log.e("testing", "price: $price,,, discount: $discount")
     if (price.isBlank() || discount.isBlank()) return ""
+    if (price.count { it == '.' } > 1 || discount.count { it == '.' } > 1) {return "!"}
 
     return (price.toFloat() - (((price.toFloat()) * discount.toFloat()) / 100)).toString()
 }
 
 fun calculateTotal(a: String, b: String, c: String, d: String): String {
     var res = 0.0
+    if (a == "!" || b == "!" || c == "!" || d == "!" )  return ""
     if (a.isNotBlank()) {
         res += a.toFloat()
     }

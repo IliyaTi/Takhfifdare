@@ -35,6 +35,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
         Pair("رضایت از میزان تخفیف", false),
         Pair("سرعت رسیدگی", false),
         Pair("مشاوره و راهنمایی مناسب", false),
+        Pair("در معرض دید بود QR", false)
     )
 
     var negFeedBack = mutableStateListOf(
@@ -47,7 +48,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
         Pair("در معرض دید نبود QR", false),
     )
 
-    suspend fun sendFeedback(storeId: Int, name: String) {
+    suspend fun sendFeedback(storeId: Int) {
         try {
             loadingState.value = true
             val userId = viewModelScope.async {

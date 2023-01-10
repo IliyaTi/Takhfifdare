@@ -26,6 +26,8 @@ class LoginScreenViewModel(application: Application): AndroidViewModel(applicati
     val loadingState = mutableStateOf(false)
     val pageState = mutableStateOf(1)
 
+    val checked = mutableStateOf(false)
+
     val phoneNumber = mutableStateOf("")
     val otp = mutableStateOf("")
     val otpToken = mutableStateOf("")

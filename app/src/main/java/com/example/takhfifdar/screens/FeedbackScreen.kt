@@ -503,7 +503,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                     .weight(1f)
                                     .padding(end = 6.dp)
                             ) {
-                                for (i in 4..7) {
+                                for (i in 4..8) {
                                     Row(
                                         horizontalArrangement = Arrangement.Center,
                                         verticalAlignment = Alignment.CenterVertically,
@@ -564,7 +564,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         onClick = {
                             scope.launch {
                                 if (viewModel.selectedRate.value != 0) {
-                                    viewModel.sendFeedback(vendorId, vendorName)
+                                    viewModel.sendFeedback(vendorId)
                                 } else {
                                     Toast.makeText(
                                         context,
@@ -629,7 +629,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                             value = rowOnePrice.value,
                             onValueChange = {
 
-                                rowOnePrice.value = it.filter { it.isDigit() }
+                                rowOnePrice.value = it.filter { it.isDigit() || it == '.' }
                                 rowOneTotal.value =
                                     calculateDiscount(rowOnePrice.value, rowOneDiscount.value)
                             },
@@ -641,7 +641,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowOneDiscount.value,
                             onValueChange = {
-                                rowOneDiscount.value = it.filter { it.isDigit() }
+                                rowOneDiscount.value = it.filter { it.isDigit() || it == '.' }
                                 rowOneTotal.value =
                                     calculateDiscount(rowOnePrice.value, rowOneDiscount.value)
                             },
@@ -663,7 +663,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowTwoPrice.value,
                             onValueChange = {
-                                rowTwoPrice.value = it.filter { it.isDigit() }
+                                rowTwoPrice.value = it.filter { it.isDigit() || it == '.' }
                                 rowTwoTotal.value =
                                     calculateDiscount(rowTwoPrice.value, rowTwoDiscount.value)
                             },
@@ -675,7 +675,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowTwoDiscount.value,
                             onValueChange = {
-                                rowTwoDiscount.value = it.filter { it.isDigit() }
+                                rowTwoDiscount.value = it.filter { it.isDigit() || it == '.' }
                                 rowTwoTotal.value =
                                     calculateDiscount(rowTwoPrice.value, rowTwoDiscount.value)
                             },
@@ -697,7 +697,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowThreePrice.value,
                             onValueChange = {
-                                rowThreePrice.value = it.filter { it.isDigit() }
+                                rowThreePrice.value = it.filter { it.isDigit() || it == '.' }
                                 rowThreeTotal.value =
                                     calculateDiscount(rowThreePrice.value, rowThreeDiscount.value)
                             },
@@ -709,7 +709,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowThreeDiscount.value,
                             onValueChange = {
-                                rowThreeDiscount.value = it.filter { it.isDigit() }
+                                rowThreeDiscount.value = it.filter { it.isDigit() || it == '.' }
                                 rowThreeTotal.value =
                                     calculateDiscount(rowThreePrice.value, rowThreeDiscount.value)
                             },
@@ -731,7 +731,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowFourPrice.value,
                             onValueChange = {
-                                rowFourPrice.value = it.filter { it.isDigit() }
+                                rowFourPrice.value = it.filter { it.isDigit() || it == '.' }
                                 rowFourTotal.value =
                                     calculateDiscount(rowFourPrice.value, rowFourDiscount.value)
                             },
@@ -743,7 +743,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         OutlinedTextField(
                             value = rowFourDiscount.value,
                             onValueChange = {
-                                rowFourDiscount.value = it.filter { it.isDigit() }
+                                rowFourDiscount.value = it.filter { it.isDigit() || it == '.' }
                                 rowFourTotal.value =
                                     calculateDiscount(rowFourPrice.value, rowFourDiscount.value)
                             },

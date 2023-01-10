@@ -21,13 +21,20 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
 
     val loadingState = mutableStateOf(false)
 
+    val months = listOf("ماه", "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند")
+
+    val userBD = TakhfifdareApplication.loggedInUser.value!!.birth_date
+
+    val dayPicker = mutableStateOf(userBD?.split("/")?.get(2))
+    val monthPicker = mutableStateOf(months.get(userBD?.split("/")?.get(1)?.toInt() ?: 0))
+    val yearPicker = mutableStateOf(userBD?.split("/")?.get(0))
+
     val firstName = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.first_name)
     val lastName = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.last_name)
     val username = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.name)
     val phoneNumber = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.phone)
     val email = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.email)
     val city = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.city)
-    val birthDate = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.birth_date)
 
     val firstNameValid = mutableStateOf(Pair(true, ""))
     val lastNameValid = mutableStateOf(Pair(true, ""))
@@ -43,10 +50,21 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
 
         viewModelScope.launch {
             loadingState.value = true
+            if (dayPicker.value!!.length == 1) dayPicker.value = '0' + dayPicker.value!!
+            val date = yearPicker.value + "/" + months.indexOf(monthPicker.value) + "/" + dayPicker.value
+            println(date)
             try {
                 val res = RetrofitInstance.api.editProfile(
                     "Bearer " + database.TokenDao().getToken().token,
-                    EditProfileBody(firstName.value ?: "", lastName.value ?: "", username.value ?: "", email.value ?: "", phoneNumber.value ?: "", city.value ?: "", birthDate.value ?: "")
+                    EditProfileBody(
+                        firstName.value ?: "",
+                        lastName.value ?: "",
+                        username.value ?: "",
+                        email.value ?: "",
+                        phoneNumber.value ?: "",
+                        city.value ?: "",
+                        date
+                    )
                 )
                 if (res.isSuccessful) {
                     println(res.body())
@@ -56,7 +74,7 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         last_name = lastName.value,
                         name = username.value,
                         phone = phoneNumber.value,
-                        birth_date = birthDate.value,
+                        birth_date = date,
                         credit = TakhfifdareApplication.loggedInUser.value!!.credit,
                         image = TakhfifdareApplication.loggedInUser.value!!.image,
                         email = email.value,
@@ -125,6 +143,18 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
             return false
         } else {
             cityValid.value = Pair(true, "")
+        }
+        if (dayPicker.value!!.isBlank() || yearPicker.value!!.isBlank()) {
+            birthDateValid.value = Pair(false, "الزامی است")
+            return false
+        } else if (monthPicker.value == months[0]) {
+            birthDateValid.value = Pair(false, "ماه را وارد کنید")
+            return false
+        } else if (yearPicker.value!!.length != 4) {
+            birthDateValid.value = Pair(false, "سال را کامل وارد کنید")
+            return false
+        } else {
+            birthDateValid.value = Pair(true, "")
         }
 
 //        if (email.value.isNullOrBlank()) {
