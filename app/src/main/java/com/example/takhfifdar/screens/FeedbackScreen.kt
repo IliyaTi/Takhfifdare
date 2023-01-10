@@ -409,7 +409,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                     .weight(1f)
                                     .padding(end = 6.dp)
                             ) {
-                                for (i in 3..5) {
+                                for (i in 3..6) {
                                     Row(
                                         horizontalArrangement = Arrangement.End,
                                         verticalAlignment = Alignment.CenterVertically,

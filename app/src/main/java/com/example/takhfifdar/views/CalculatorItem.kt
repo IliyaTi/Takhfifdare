@@ -40,10 +40,10 @@ fun calculateTotal(a: String, b: String, c: String, d: String): String {
         res += b.toFloat()
     }
     if (c.isNotBlank()) {
-        res += c.toInt()
+        res += c.toFloat()
     }
     if (d.isNotBlank()) {
-        res += d.toInt()
+        res += d.toFloat()
     }
     return res.toString()
 }

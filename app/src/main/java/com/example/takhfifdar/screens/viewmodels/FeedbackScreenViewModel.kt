@@ -44,6 +44,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
         Pair("شرایط نامناسب فروشگاه", false),
         Pair("عدم رعایت اصول بهداشتی", false),
         Pair("عدم رضایت از میزان تخفیف", false),
+        Pair("در معرض دید نبود QR", false),
     )
 
     suspend fun sendFeedback(storeId: Int, name: String) {
