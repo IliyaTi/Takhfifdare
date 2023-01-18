@@ -125,6 +125,10 @@ fun NavigationComponent(
             SplashScreen(database)
         }
 
+        composable("BuyCouponScreen") {
+            BuyCouponScreen()
+        }
+
     }
 }
 

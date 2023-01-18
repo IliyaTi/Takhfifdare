@@ -149,8 +149,7 @@ fun HomeScreen(
                     Navigator.navigateTo(NavTarget.FillUserDataScreen)
                 }
                 BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.Storefront) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/"))
-                    context.startActivity(intent)
+                    Navigator.navigateTo(NavTarget.BuyCouponScreen)
                 }
                 BackdropMenuItem(title = "فروشگاه ها", icon = Icons.Default.Storefront) {
 
@@ -158,9 +157,6 @@ fun HomeScreen(
                     context.startActivity(intent)
                 }
             }
-            
-            
-
 
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {

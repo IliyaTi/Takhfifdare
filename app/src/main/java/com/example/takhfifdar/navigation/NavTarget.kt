@@ -6,5 +6,6 @@ enum class NavTarget(val label: String) {
     LoginScreen("LoginScreen"),
     QrScanner("QrScanner"),
     FillUserDataScreen("FillUserDataScreen"),
-    FeedbackScreen("FeedbackScreen");
+    FeedbackScreen("FeedbackScreen"),
+    BuyCouponScreen("BuyCouponScreen");
 }
