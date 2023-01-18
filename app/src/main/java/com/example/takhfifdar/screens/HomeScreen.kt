@@ -133,6 +133,10 @@ fun HomeScreen(
                 BackdropMenuItem(title = "ورود/ثبت نام", icon = Icons.Filled.Login) {
                     Navigator.navigateTo(NavTarget.LoginScreen)
                 }
+                BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Storefront) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
+                    context.startActivity(intent)
+                }
             } else {
                 BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
                     homeScreenNavController.navigate("tapToScan") {
@@ -141,29 +145,37 @@ fun HomeScreen(
                     }
                     scope.launch { backdropState.conceal() }
                 }
+                BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
+                    Navigator.navigateTo(NavTarget.FillUserDataScreen)
+                }
+                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.Storefront) {
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/"))
+                    context.startActivity(intent)
+                }
+                BackdropMenuItem(title = "فروشگاه ها", icon = Icons.Default.Storefront) {
+
+                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/"))
+                    context.startActivity(intent)
+                }
+            }
+            
+            
+
+
+            BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
+                homeScreenNavController.navigate("aboutUs") {
+                    launchSingleTop = true
+                    homeScreenNavController.popBackStack()
+                }
+                scope.launch { backdropState.conceal() }
+            }
+            if(TakhfifdareApplication.loggedInUser.value != null) {
                 BackdropMenuItem(title = "خروج", icon = Icons.Filled.Logout) {
                     scope.launch {
                         viewModel.signOut()
                         backdropState.conceal()
                     }
                 }
-                BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
-                    Navigator.navigateTo(NavTarget.FillUserDataScreen)
-                }
-            }
-
-            BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Storefront) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
-                context.startActivity(intent)
-            }
-
-
-            BackdropMenuItem(title = "درباره", icon = Icons.Filled.ContactSupport) {
-                homeScreenNavController.navigate("aboutUs") {
-                    launchSingleTop = true
-                    homeScreenNavController.popBackStack()
-                }
-                scope.launch { backdropState.conceal() }
             }
         },
         frontLayerContent = {
