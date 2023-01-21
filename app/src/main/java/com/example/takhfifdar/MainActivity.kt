@@ -126,7 +126,7 @@ fun NavigationComponent(
         }
 
         composable("BuyCouponScreen") {
-            BuyCouponScreen()
+            BuyCouponScreen(viewModel<BuyCouponScreenViewMode>())
         }
 
     }
