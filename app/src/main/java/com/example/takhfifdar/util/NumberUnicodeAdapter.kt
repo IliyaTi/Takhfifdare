@@ -24,4 +24,17 @@ class NumberUnicodeAdapter {
         return res.toString()
     }
 
+    fun format(a: Int): String {
+        val string = a.toString()
+        var res = StringBuilder()
+        val reverse = string.reversed()
+        for (i in 1 .. reverse.length) {
+            res.append(reverse[i - 1])
+            if (i % 3 == 0) res.append(",")
+        }
+        res = res.reverse()
+        if (res[0] == ',') res = res.deleteCharAt(0)
+        return res.toString()
+    }
+
 }

@@ -5,12 +5,11 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Button
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.OutlinedTextField
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,7 +17,9 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -26,6 +27,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.example.takhfifdar.R
 import com.example.takhfifdar.screens.viewmodels.BuyCouponScreenViewMode
+import com.example.takhfifdar.util.NumberUnicodeAdapter
 
 @Composable
 fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
@@ -40,31 +42,46 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(scrollState), horizontalAlignment = Alignment.CenterHorizontally
+            .verticalScroll(scrollState), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
     ) {
 
-        val discountCode = remember { mutableStateOf("") }
+        Spacer(modifier = Modifier.height(20.dp))
 
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
             Row(modifier = Modifier.fillMaxWidth(.8f), verticalAlignment = Alignment.CenterVertically) {
                 OutlinedTextField(
                     modifier = Modifier.weight(3f),
-                    value = discountCode.value,
-                    onValueChange = { discountCode.value = it },
+                    value = viewModel.discountCode.value,
+                    onValueChange = { viewModel.discountCode.value = it },
                     label = { Text(text = "کد تخفیف") }
                 )
-                Button(onClick = { /*TODO*/ }, modifier = Modifier.weight(1f)) {
-                    Text(text = "اعمال کد")
+                Spacer(modifier = Modifier.width(10.dp))
+                Button(
+                    onClick = {
+                        viewModel.checkDiscountValidity()
+                    },
+                    modifier = Modifier
+                        .weight(1f)
+                        .height(IntrinsicSize.Max)) {
+                    if (viewModel.discountCodeLoading.value) {
+                        CircularProgressIndicator(color = Color.White)
+                    } else {
+                        Text(text = "ثبت")
+                    }
                 }
             }
+            Text(text = viewModel.discountStatus.value, color = Color(0xFF059700))
         }
+        
+
 
         Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
-            value = "۵۰,۰۰۰",
+            value = 50000,
             count = 5,
             username = viewModel.fullName,
-            pic = R.drawable.card_03
+            pic = R.drawable.card_03,
+            discount = viewModel.discountPercentage.value
         )
         Spacer(modifier = Modifier.height(5.dp))
         Button(onClick = { /*TODO*/ }) {
@@ -72,10 +89,11 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
         }
         Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
-            value = "۱۰۰,۰۰۰",
+            value = 100000,
             count = 10,
             username = viewModel.fullName,
-            pic = R.drawable.card_02
+            pic = R.drawable.card_02,
+            discount = viewModel.discountPercentage.value
         )
         Spacer(modifier = Modifier.height(5.dp))
         Button(onClick = { /*TODO*/ }) {
@@ -83,10 +101,11 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
         }
         Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
-            value = "۱۵۰,۰۰۰",
+            value = 150000,
             count = 15,
             username = viewModel.fullName,
-            pic = R.drawable.card_01
+            pic = R.drawable.card_01,
+            discount = viewModel.discountPercentage.value
         )
         Spacer(modifier = Modifier.height(5.dp))
         Button(onClick = { /*TODO*/ }) {
@@ -98,7 +117,9 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
 }
 
 @Composable
-fun CouponCard(value: String, count: Int, username: String, pic: Int) {
+fun CouponCard(value: Int, count: Int, username: String, pic: Int, discount: Int) {
+
+    val price = value - (value/100)*discount
 
     val set = ConstraintSet {
         val image = createRefFor("image")
@@ -106,6 +127,7 @@ fun CouponCard(value: String, count: Int, username: String, pic: Int) {
         val valueTag = createRefFor("valueTag")
         val name = createRefFor("username")
         val countView = createRefFor("count")
+        val newOffer = createRefFor("newOffer")
 
         constrain(image) {
             top.linkTo(parent.top)
@@ -124,6 +146,12 @@ fun CouponCard(value: String, count: Int, username: String, pic: Int) {
             top.linkTo(takhfifdare.bottom, 30.dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
+        }
+
+        constrain(newOffer) {
+            top.linkTo(valueTag.bottom)
+            start.linkTo(valueTag.start)
+            end.linkTo(valueTag.end)
         }
 
         constrain(name) {
@@ -160,9 +188,10 @@ fun CouponCard(value: String, count: Int, username: String, pic: Int) {
                     fontWeight = FontWeight.W500
                 )
                 Text(
-                    text = value,
+                    text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(value)),
                     fontSize = 18.sp,
-                    color = Color.White,
+                    color = if (discount == 0) Color.White else Color.Red,
+                    style = if (discount != 0) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle(),
                     fontWeight = FontWeight.W500
                 )
                 Text(
@@ -172,6 +201,10 @@ fun CouponCard(value: String, count: Int, username: String, pic: Int) {
                     fontWeight = FontWeight.W500
                 )
             }
+
+            if (discount != 0)
+                Text(text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(price)), modifier = Modifier.layoutId("newOffer"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+
             Column(
                 modifier = Modifier.layoutId("count"),
                 horizontalAlignment = Alignment.CenterHorizontally

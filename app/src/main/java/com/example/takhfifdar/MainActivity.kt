@@ -1,23 +1,32 @@
 package com.example.takhfifdar
 
 import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.Surface
-import androidx.compose.material.Text
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.*
+import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Update
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -25,6 +34,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import androidx.navigation.navDeepLink
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
@@ -129,6 +139,54 @@ fun NavigationComponent(
             BuyCouponScreen(viewModel<BuyCouponScreenViewMode>())
         }
 
+        composable("dial") {
+            UpdateDialog()
+        }
+
+        composable(
+            route = "test",
+            deepLinks = listOf(
+                navDeepLink {
+                    uriPattern = "commando://"
+                    action = Intent.ACTION_VIEW
+                }
+            )
+        ) {
+            PaymentResultScreen()
+        }
+
+    }
+}
+
+
+@Composable
+fun UpdateDialog() {
+    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+        AlertDialog(
+            onDismissRequest = { /*TODO*/ },
+            confirmButton = {
+                Button(onClick = { /*TODO*/ }) {
+                    Text(text = "بروزرسانی")
+                }
+            },
+            dismissButton = {
+                OutlinedButton(onClick = { /*TODO*/ }) {
+                    Text(text = "انصراف")
+                }
+            },
+            text = {
+                Column {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(imageVector = Icons.Filled.Update, contentDescription = "")
+                        Spacer(modifier = Modifier.width(10.dp))
+                        Text(text = "بروزرسانی", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text(text = "در سیستم ما تغییرات عمده ای صورت گرفته و ادامه فعالیت برنامه نیازمند بروزرسانی است. لطفا جهت استفاده از برنامه آن را بروزرسانی کنید.")
+                }
+            },
+
+            )
     }
 }
 

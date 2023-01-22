@@ -1,7 +1,6 @@
 package com.example.takhfifdar.data.repositories.remote.network
 
 import com.example.takhfifdar.data.repositories.remote.network.objects.*
-import retrofit2.Call
 import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.Header
@@ -25,5 +24,17 @@ interface TakhfifdarApi {
     @Headers("Accept: application/json")
     @POST("api/api/edit-profile")
     suspend fun editProfile(@Header("Authorization") token: String, @Body body: EditProfileBody): Response<EditProfileResponse>
+
+//    @Headers("Accept: application/json")
+//    @GET("api/api/test")
+//    suspend fun test()
+
+    @Headers("Accept: application/json")
+    @POST("api/api/refahPayment")
+    suspend fun refahPayment()
+
+    @Headers("Accept: application/json")
+    @POST("api/api/payment/discount")
+    suspend fun checkDiscountCode(@Header("Authorization") token: String, @Body body: DiscountBody): Response<DiscountResponse>
 
 }
