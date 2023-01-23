@@ -97,7 +97,7 @@ fun NavigationComponent(
     activity: Activity,
     launcher: ManagedActivityResultLauncher<String, Boolean>,
     database: TakhfifdarDatabase
-){
+) {
     LaunchedEffect("navigation") {
         Navigator.sharedFlow.onEach {
             navController.navigate(it) {
@@ -105,10 +105,19 @@ fun NavigationComponent(
             }
         }.launchIn(this)
     }
-    NavHost(navController = navController, startDestination = "SplashScreen") {
+    NavHost(navController = navController, startDestination = "PaymentResult") {
 
         composable("HomeScreen") {
-            HomeScreen(activity, viewModel<HomeScreenViewModel>(factory = HomeScreenViewModelFactory(TakhfifdareApplication(), launcher, activity)))
+            HomeScreen(
+                activity,
+                viewModel<HomeScreenViewModel>(
+                    factory = HomeScreenViewModelFactory(
+                        TakhfifdareApplication(),
+                        launcher,
+                        activity
+                    )
+                )
+            )
         }
 
         composable("FillUserDataScreen") {
@@ -123,8 +132,11 @@ fun NavigationComponent(
         composable(
             "FeedbackScreen/{vendor}",
             arguments = listOf(navArgument("vendor") { type = NavType.StringType })
-        ){
-            FeedbackScreen(it.arguments!!.getString("vendor")!!, viewModel<FeedbackScreenViewModel>())
+        ) {
+            FeedbackScreen(
+                it.arguments!!.getString("vendor")!!,
+                viewModel<FeedbackScreenViewModel>()
+            )
         }
 
         composable("LoginScreen") {
@@ -144,15 +156,20 @@ fun NavigationComponent(
         }
 
         composable(
-            route = "test",
+            route = "PaymentResult",
             deepLinks = listOf(
                 navDeepLink {
-                    uriPattern = "commando://"
+                    uriPattern = "commando://sh.com/{id}"
                     action = Intent.ACTION_VIEW
+                }
+            ), arguments = listOf(
+                navArgument("id") {
+                    type = NavType.IntType
+                    defaultValue = 0
                 }
             )
         ) {
-            PaymentResultScreen()
+            PaymentResultScreen(it.arguments?.getInt("id") ?: 0)
         }
 
     }

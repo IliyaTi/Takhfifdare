@@ -1,5 +1,6 @@
 package com.example.takhfifdar.screens
 
+import android.app.Activity
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
@@ -26,12 +28,14 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import com.example.takhfifdar.R
+import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.screens.viewmodels.BuyCouponScreenViewMode
 import com.example.takhfifdar.util.NumberUnicodeAdapter
 
 @Composable
 fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
     val scrollState = rememberScrollState()
+    val context = LocalContext.current as Activity
 
     Image(
         painter = painterResource(id = R.drawable.bg),
@@ -77,47 +81,38 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
 
         Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
+            context = context,
             value = 50000,
             count = 5,
             username = viewModel.fullName,
             pic = R.drawable.card_03,
-            discount = viewModel.discountPercentage.value
+            discount = viewModel.discountPercentage.value,
+            viewModel = viewModel
         )
-        Spacer(modifier = Modifier.height(5.dp))
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "خرید")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
+            context = context,
             value = 100000,
             count = 10,
             username = viewModel.fullName,
             pic = R.drawable.card_02,
-            discount = viewModel.discountPercentage.value
+            discount = viewModel.discountPercentage.value,
+            viewModel = viewModel
         )
-        Spacer(modifier = Modifier.height(5.dp))
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "خرید")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
-            value = 150000,
+            context = context,
+            value = 10000,
             count = 15,
             username = viewModel.fullName,
             pic = R.drawable.card_01,
-            discount = viewModel.discountPercentage.value
+            discount = viewModel.discountPercentage.value,
+            viewModel = viewModel
         )
-        Spacer(modifier = Modifier.height(5.dp))
-        Button(onClick = { /*TODO*/ }) {
-            Text(text = "خرید")
-        }
-        Spacer(modifier = Modifier.height(20.dp))
     }
 
 }
 
 @Composable
-fun CouponCard(value: Int, count: Int, username: String, pic: Int, discount: Int) {
+fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic: Int, discount: Int, viewModel: BuyCouponScreenViewMode) {
 
     val price = value - (value/100)*discount
 
@@ -166,59 +161,74 @@ fun CouponCard(value: Int, count: Int, username: String, pic: Int, discount: Int
 
     }
 
-    ConstraintLayout(set, modifier = Modifier.fillMaxWidth(0.8f)) {
-        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-            Image(
-                painter = painterResource(id = pic),
-                contentDescription = "",
-                modifier = Modifier.layoutId("image")
-            )
-            Text(
-                text = "تخفیف داره",
-                modifier = Modifier.layoutId("takhfifdare"),
-                fontSize = 28.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-            Row(modifier = Modifier.layoutId("valueTag")) {
-                Text(
-                    text = "مبلغ ",
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.W500
+    Column(horizontalAlignment = Alignment.CenterHorizontally) {
+        ConstraintLayout(set, modifier = Modifier.fillMaxWidth(0.8f)) {
+            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                Image(
+                    painter = painterResource(id = pic),
+                    contentDescription = "",
+                    modifier = Modifier.layoutId("image")
                 )
                 Text(
-                    text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(value)),
-                    fontSize = 18.sp,
-                    color = if (discount == 0) Color.White else Color.Red,
-                    style = if (discount != 0) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle(),
-                    fontWeight = FontWeight.W500
+                    text = "تخفیف داره",
+                    modifier = Modifier.layoutId("takhfifdare"),
+                    fontSize = 28.sp,
+                    fontWeight = FontWeight.Bold,
+                    color = Color.White
                 )
-                Text(
-                    text = " تومان",
-                    fontSize = 18.sp,
-                    color = Color.White,
-                    fontWeight = FontWeight.W500
-                )
-            }
+                Row(modifier = Modifier.layoutId("valueTag")) {
+                    Text(
+                        text = "مبلغ ",
+                        fontSize = 18.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.W500
+                    )
+                    Text(
+                        text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(value)),
+                        fontSize = 18.sp,
+                        color = if (discount == 0) Color.White else Color.Red,
+                        style = if (discount != 0) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle(textDecoration = TextDecoration.None) ,
+                        fontWeight = FontWeight.W500
+                    )
+                    Text(
+                        text = " تومان",
+                        fontSize = 18.sp,
+                        color = Color.White,
+                        fontWeight = FontWeight.W500
+                    )
+                }
 
-            if (discount != 0)
-                Text(text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(price)), modifier = Modifier.layoutId("newOffer"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                if (discount != 0)
+                    Text(text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(price)), modifier = Modifier.layoutId("newOffer"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
 
-            Column(
-                modifier = Modifier.layoutId("count"),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "تعداد", color = Color.White)
-                Text(text = count.toString(), color = Color.White)
-            }
-            Column(
-                modifier = Modifier.layoutId("username"),
-                horizontalAlignment = Alignment.CenterHorizontally
-            ) {
-                Text(text = "مشخصات", color = Color.White)
-                Text(text = username, color = Color.White, fontWeight = FontWeight.W400)
+                Column(
+                    modifier = Modifier.layoutId("count"),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "تعداد", color = Color.White)
+                    Text(text = count.toString(), color = Color.White)
+                }
+                Column(
+                    modifier = Modifier.layoutId("username"),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    Text(text = "مشخصات", color = Color.White)
+                    Text(text = username, color = Color.White, fontWeight = FontWeight.W400)
+                }
             }
         }
+        Spacer(modifier = Modifier.height(5.dp))
+        Button(onClick = {
+            viewModel.proceedToGateway(
+                price = price.toString(),
+                type = value.toString(),
+                discount = if (viewModel.discountStatus.value != "") viewModel.discountCode.value else "",
+                context = context
+            )
+        }) {
+            Text(text = "خرید")
+        }
+        Spacer(modifier = Modifier.height(20.dp))
     }
+
 }

@@ -1,7 +1,11 @@
 package com.example.takhfifdar.screens.viewmodels
 
+import android.app.Activity
 import android.app.Application
 import android.content.Intent
+import android.net.Uri
+import android.os.Bundle
+import android.provider.Browser
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.core.net.toUri
@@ -35,11 +39,13 @@ class BuyCouponScreenViewMode(application: Application) : AndroidViewModel(appli
                 discountCodeLoading.value = false
             } else {
                 if (res.code() == 401) {
+                    discountPercentage.value = 0
                     Toast.makeText(getApplication(), "کد وارد شده معتبر نمیباشد", Toast.LENGTH_LONG).show()
                     discountStatus.value = ""
                     discountCodeLoading.value = false
                 } else {
                  Toast.makeText(getApplication(), "مشکل ناشناخته ای رخ داد", Toast.LENGTH_LONG).show()
+                    discountPercentage.value = 0
                     discountStatus.value = ""
                     discountCodeLoading.value = false
                 }
@@ -47,8 +53,28 @@ class BuyCouponScreenViewMode(application: Application) : AndroidViewModel(appli
         }
     }
 
-    fun proceedToGateway(price:) {
-        val intent = Intent(Intent.ACTION_VIEW, "https://".toUri())
+    fun proceedToGateway(
+        context: Activity,
+        price: String,
+        userId: String = TakhfifdareApplication.loggedInUser.value?.id.toString(),
+        discount: String,
+        type: String
+    ) {
+        val intent = Intent(
+            Intent.ACTION_VIEW,
+            Uri.parse("https://takhfifdare.com/api/api/refahPayment?price=$price&user_id=$userId&type=$type&discount=$discount")
+        )
+        viewModelScope.launch {
+//            val bundle = Bundle()
+//            bundle.putString("Authorization", "Bearer " + database.getToken().token)
+//            intent.putExtra(Browser.EXTRA_HEADERS, bundle)
+            context.startActivity(intent)
+        }
+
     }
 
 }
+
+//class BuyCouponScreenViewModelFactory(val activity: Activity) : ViewModelProvider.NewInstanceFactory() {
+//    override fun <T : ViewModel> create(modelClass: Class<T>): T = BuyCouponScreenViewMode(activity) as T
+//}
