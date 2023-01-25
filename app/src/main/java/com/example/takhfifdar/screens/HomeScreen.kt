@@ -6,6 +6,7 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -13,6 +14,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -30,6 +32,9 @@ import androidx.constraintlayout.compose.ConstraintSet
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import com.airbnb.lottie.compose.LottieAnimation
+import com.airbnb.lottie.compose.LottieCompositionSpec
+import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.takhfifdar.R
 import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
@@ -197,9 +202,16 @@ fun HomeScreen(
 }
 
 val mainSet = ConstraintSet {
+    val lottie = createRefFor("lottie")
     val bg = createRefFor("bg")
     val button = createRefFor("button")
     val icon = createRefFor("icon")
+
+    constrain(lottie) {
+        top.linkTo(parent.top)
+        start.linkTo(parent.start)
+        end.linkTo(parent.end)
+    }
 
     constrain(bg) {
         bottom.linkTo(parent.bottom)
@@ -231,6 +243,14 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
         contentScale = ContentScale.Crop
     )
     ConstraintLayout(mainSet, modifier = Modifier.fillMaxSize()) {
+
+        val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.scrolldown))
+        LottieAnimation(
+            composition = composition,
+            modifier = Modifier.layoutId("lottie").height(50.dp),
+            iterations = Int.MAX_VALUE
+        )
+
         Button(
             onClick = {
                 viewModel.proceedToScan()
