@@ -1,3 +1,7 @@
 package com.example.takhfifdar.data.repositories.remote.network.objects
 
-data class GetUserBody()
+import com.google.gson.annotations.SerializedName
+
+data class GetUserBody(
+    val user_id: String
+)

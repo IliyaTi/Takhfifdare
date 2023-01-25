@@ -148,7 +148,7 @@ fun HomeScreen(
                 BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
                     Navigator.navigateTo(NavTarget.FillUserDataScreen)
                 }
-                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.Storefront) {
+                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.ShoppingCart) {
                     Navigator.navigateTo(NavTarget.BuyCouponScreen)
                 }
                 BackdropMenuItem(title = "فروشگاه ها", icon = Icons.Default.Storefront) {

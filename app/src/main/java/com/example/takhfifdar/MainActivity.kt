@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
@@ -105,7 +104,7 @@ fun NavigationComponent(
             }
         }.launchIn(this)
     }
-    NavHost(navController = navController, startDestination = "PaymentResult") {
+    NavHost(navController = navController, startDestination = "SplashScreen") {
 
         composable("HomeScreen") {
             HomeScreen(

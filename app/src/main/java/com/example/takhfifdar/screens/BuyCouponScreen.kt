@@ -100,7 +100,7 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
         )
         CouponCard(
             context = context,
-            value = 10000,
+            value = 150000,
             count = 15,
             username = viewModel.fullName,
             pic = R.drawable.card_01,
