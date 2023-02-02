@@ -185,7 +185,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     )
                     Box {
                         OutlinedButton(onClick = { monthPickerExp = !monthPickerExp }, Modifier.height(IntrinsicSize.Max)) {
-                            Text(text = viewModel.monthPicker.value)
+                            Text(text = viewModel.monthPicker.value, color = Color.Blue)
                         }
                         DropdownMenu(
                             expanded = monthPickerExp,
@@ -222,7 +222,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     .fillMaxWidth()
                     .padding(horizontal = 20.dp, vertical = 20.dp)
             ) {
-                Text(text = "ثبت اطلاعات", fontSize = 16.sp)
+                Text(text = "ثبت اطلاعات", fontSize = 16.sp, color = Color.White)
             }
 
             // Loading indicator

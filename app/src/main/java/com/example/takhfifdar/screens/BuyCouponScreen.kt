@@ -70,7 +70,7 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
                     if (viewModel.discountCodeLoading.value) {
                         CircularProgressIndicator(color = Color.White)
                     } else {
-                        Text(text = "ثبت")
+                        Text(text = "ثبت", color = Color.White)
                     }
                 }
             }
@@ -226,7 +226,7 @@ fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic:
                 context = context
             )
         }) {
-            Text(text = "خرید")
+            Text(text = "خرید", color = Color.White)
         }
         Spacer(modifier = Modifier.height(20.dp))
     }

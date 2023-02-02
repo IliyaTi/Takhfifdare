@@ -12,7 +12,6 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -31,7 +30,6 @@ import com.example.takhfifdar.R
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.viewmodels.LoginScreenViewModel
-import com.google.android.gms.auth.api.phone.SmsRetriever
 
 @Composable
 fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
@@ -118,7 +116,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                             shape = RoundedCornerShape(4.dp),
                             enabled = viewModel.checked.value
                         ) {
-                            Text(text = "ارسال کد", fontSize = 16.sp)
+                            Text(text = "ارسال کد", fontSize = 16.sp, color = Color.White)
                         }
 
                     }
@@ -134,7 +132,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                         OutlinedTextField(
                             value = viewModel.otp.value,
                             onValueChange = { viewModel.otp.value = it },
-                            label = { Text(text = "کد ارسالی") },
+                            label = { Text(text = "کد ارسالی", color = Color.Black) },
                             maxLines = 1,
                             keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Number, imeAction = ImeAction.Done),
                         )
@@ -143,7 +141,7 @@ fun LoginScreen(viewModel: LoginScreenViewModel, context: Activity) {
                             onClick = { viewModel.confirmCode() },
                             shape = RoundedCornerShape(4.dp)
                         ) {
-                            Text(text = "ورود", fontSize = 16.sp)
+                            Text(text = "ورود", fontSize = 16.sp, color = Color.White)
                         }
                     }
                 }

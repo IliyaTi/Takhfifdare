@@ -33,6 +33,6 @@ fun BackdropMenuItem(
     ) {
         Icon(imageVector = icon, contentDescription = "icon")
         Spacer(modifier = Modifier.width(10.dp))
-        Text(text = title, fontStyle = FontStyle.Italic, fontSize = 16.sp)
+        Text(text = title, fontStyle = FontStyle.Italic, fontSize = 16.sp, color = Color.White)
     }
 }

@@ -788,7 +788,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                         .padding(20.dp),
                     onClick = { calcState = false }
                 ) {
-                    Text(text = "ادامه")
+                    Text(text = "ادامه", color = Color.White)
                 }
             }
 
@@ -803,7 +803,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                 onDismissRequest = { viewModel.openDialog.value = false },
                 confirmButton = {
                     Button(onClick = { viewModel.openDialog.value = false }) {
-                        Text(text = "ثبت")
+                        Text(text = "ثبت", color = Color.White)
                     }
                 },
                 text = {

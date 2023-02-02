@@ -6,7 +6,6 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -107,7 +106,7 @@ fun HomeScreen(
                             )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = "تخفیف داره", fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                        Text(text = "تخفیف داره", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
                     }
                     Row(
                         modifier = Modifier
@@ -120,12 +119,12 @@ fun HomeScreen(
                         Row {
                             Icon(imageVector = Icons.Default.Person, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر")
+                            Text(text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر", color = Color.White)
                         }
                         Row {
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار")
+                            Text(text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار", color = Color.White)
                         }
                     }
                 }
@@ -137,10 +136,6 @@ fun HomeScreen(
             if (TakhfifdareApplication.loggedInUser.value == null) {
                 BackdropMenuItem(title = "ورود/ثبت نام", icon = Icons.Filled.Login) {
                     Navigator.navigateTo(NavTarget.LoginScreen)
-                }
-                BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Storefront) {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
-                    context.startActivity(intent)
                 }
             } else {
                 BackdropMenuItem(title = "اسکن کن", icon = Icons.Filled.QrCodeScanner) {
@@ -162,7 +157,10 @@ fun HomeScreen(
                     context.startActivity(intent)
                 }
             }
-
+            BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Store) {
+                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
+                context.startActivity(intent)
+            }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
                     launchSingleTop = true
@@ -208,7 +206,7 @@ val mainSet = ConstraintSet {
     val icon = createRefFor("icon")
 
     constrain(lottie) {
-        top.linkTo(parent.top)
+        top.linkTo(parent.top, (-20).dp)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
     }
@@ -247,7 +245,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.scrolldown))
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.layoutId("lottie").height(50.dp),
+            modifier = Modifier.layoutId("lottie").size(80.dp),
             iterations = Int.MAX_VALUE
         )
 

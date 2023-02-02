@@ -4,6 +4,8 @@ import android.content.Context
 import androidx.room.RoomDatabase
 import androidx.room.Database
 import androidx.room.Room
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 
 
 @Database(entities = [User::class, Token::class], version = 3, exportSchema = false)
@@ -16,6 +18,12 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
         @Volatile
         private var INSTANCE: TakhfifdarDatabase? = null
 
+        val migration3to4 = object : Migration(3, 4) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                database.execSQL("ALTER TABLE user ADD invite_code varchar(255);")
+            }
+        }
+
         fun getDatabase(context: Context): TakhfifdarDatabase {
             val tempInstance = INSTANCE
             if (tempInstance != null) {
@@ -26,7 +34,9 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
                     context.applicationContext,
                     TakhfifdarDatabase::class.java,
                     "TakhfifdarDatabase"
-                ).build()
+                )
+                    .addMigrations()
+                    .build()
                 INSTANCE = instance
                 return instance
             }

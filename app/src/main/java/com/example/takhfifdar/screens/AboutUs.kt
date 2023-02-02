@@ -51,7 +51,7 @@ fun AboutUs(context: Context) {
         val anim = createRefFor("anim")
 
         constrain(anim) {
-            top.linkTo(parent.top)
+            top.linkTo(parent.top, (-20).dp)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
         }
@@ -63,7 +63,7 @@ fun AboutUs(context: Context) {
         }
 
         constrain(content) {
-            top.linkTo(anim.bottom)
+            top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
             bottom.linkTo(indicator.top)
@@ -78,7 +78,7 @@ fun AboutUs(context: Context) {
 //        val animationSpec = remember { LottieAnimationSpec.RawRes(R.raw.scrolldown) }
 //        val animationState = rememberLottieAnimationState(autoPlay = true, repeatCount = 4)
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.scrolldown))
-        LottieAnimation(composition = composition, modifier = Modifier.layoutId("anim").height(50.dp), iterations = Int.MAX_VALUE)
+        LottieAnimation(composition = composition, modifier = Modifier.layoutId("anim").size(80.dp), iterations = Int.MAX_VALUE)
 
         HorizontalPager(count = 6, state = slidePage, modifier = Modifier.layoutId("content")) {
             CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
@@ -301,7 +301,7 @@ fun Page5(context: Context) {
                 },
                 shape = RoundedCornerShape(20.dp)
             ) {
-                Text(text = "ورود / ثبت نام", fontSize = 20.sp)
+                Text(text = "ورود / ثبت نام", fontSize = 20.sp, color = Color.White)
             }
 
         }
