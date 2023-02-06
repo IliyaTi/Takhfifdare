@@ -51,16 +51,16 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                         Navigator.navigateTo(NavTarget.HomeScreen)
                         Toast.makeText(getApplication(), "متاسفانه اعتبار شما به پایان رسیده", Toast.LENGTH_LONG).show()
                     } else if (req.code() == 405) {
-                        Navigator.navigateTo(NavTarget.LoginScreen)
                         Toast.makeText(getApplication(), "لطفا دوباره ورود نمایید", Toast.LENGTH_LONG).show()
+                        Navigator.navigateTo(NavTarget.LoginScreen)
                     }
                 }
             } catch (e: SocketTimeoutException) {
                 Toast.makeText(getApplication(), "جوابی دریافت نشد", Toast.LENGTH_LONG).show()
             } catch (e: Exception) {
                 e.printStackTrace()
-                Navigator.navigateTo(NavTarget.LoginScreen)
                 Toast.makeText(getApplication(), "لطفا دوباره ورود نمایید", Toast.LENGTH_LONG).show()
+                Navigator.navigateTo(NavTarget.LoginScreen)
             }
         }
     }

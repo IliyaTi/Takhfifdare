@@ -7,5 +7,6 @@ data class QrResponse(
     val user: User,
     @SerializedName("store_image")
     val storeImage: String?,
-    val discount: String
+    val discount: String,
+    val storeName: String
 )

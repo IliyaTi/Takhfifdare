@@ -18,7 +18,7 @@ class QrButtonShape: androidx.compose.ui.graphics.Shape {
             addRoundRect(
                 RoundRect(
                 Rect(topLeft = Offset(0f, 0f), bottomRight = Offset(size.width, size.height - 40)),
-                cornerRadius = CornerRadius(140f, 140f)
+                cornerRadius = CornerRadius(100f, 100f)
             )
             )
 //            drawRoundRect(Color.Black, size = Size(size.width, size.height - 40), cornerRadius = CornerRadius(160f, 160f))

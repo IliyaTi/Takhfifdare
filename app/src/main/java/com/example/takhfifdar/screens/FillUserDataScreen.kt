@@ -1,12 +1,10 @@
 package com.example.takhfifdar.screens
 
 import android.view.RoundedCorner
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
+import androidx.compose.foundation.*
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
@@ -74,9 +72,8 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
             Column(
                 modifier = Modifier
                     .layoutId("form")
-                    .scrollable(
+                    .verticalScroll(
                         state = scrollState,
-                        orientation = Orientation.Vertical
                     )
                     .padding(horizontal = 20.dp)
             ) {
@@ -230,6 +227,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
+                        .clickable {  }
                         .background(Color(0x80000000)),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center

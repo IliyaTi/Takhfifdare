@@ -6,15 +6,13 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
@@ -22,8 +20,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -106,7 +106,12 @@ fun HomeScreen(
                             )
                         }
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = "تخفیف داره", fontWeight = FontWeight.Bold, fontSize = 18.sp, color = Color.White)
+                        Text(
+                            text = "تخفیف داره",
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 18.sp,
+                            color = Color.White
+                        )
                     }
                     Row(
                         modifier = Modifier
@@ -119,12 +124,18 @@ fun HomeScreen(
                         Row {
                             Icon(imageVector = Icons.Default.Person, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر", color = Color.White)
+                            Text(
+                                text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر",
+                                color = Color.White
+                            )
                         }
                         Row {
                             Icon(imageVector = Icons.Default.Payments, contentDescription = "")
                             Spacer(modifier = Modifier.width(4.dp))
-                            Text(text = TakhfifdareApplication.loggedInUser.value?.credit ?: "اعتبار", color = Color.White)
+                            Text(
+                                text = TakhfifdareApplication.loggedInUser.value?.credit
+                                    ?: "اعتبار", color = Color.White
+                            )
                         }
                     }
                 }
@@ -158,7 +169,10 @@ fun HomeScreen(
                 }
             }
             BackdropMenuItem(title = "پنل فروشندگان", icon = Icons.Default.Store) {
-                val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://seller.takhfifdare.com/Otp/index"))
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://seller.takhfifdare.com/Otp/index")
+                )
                 context.startActivity(intent)
             }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
@@ -168,7 +182,7 @@ fun HomeScreen(
                 }
                 scope.launch { backdropState.conceal() }
             }
-            if(TakhfifdareApplication.loggedInUser.value != null) {
+            if (TakhfifdareApplication.loggedInUser.value != null) {
                 BackdropMenuItem(title = "خروج", icon = Icons.Filled.Logout) {
                     scope.launch {
                         viewModel.signOut()
@@ -202,8 +216,8 @@ fun HomeScreen(
 val mainSet = ConstraintSet {
     val lottie = createRefFor("lottie")
     val bg = createRefFor("bg")
-    val button = createRefFor("button")
-    val icon = createRefFor("icon")
+    val container = createRefFor("container")
+
 
     constrain(lottie) {
         top.linkTo(parent.top, (-20).dp)
@@ -217,76 +231,122 @@ val mainSet = ConstraintSet {
         end.linkTo(parent.end)
     }
 
-    constrain(icon) {
-        top.linkTo(parent.top, margin = 130.dp)
+    constrain(container) {
+        top.linkTo(lottie.bottom)
         start.linkTo(parent.start)
         end.linkTo(parent.end)
     }
 
-    constrain(button) {
-        top.linkTo(icon.bottom, margin = 10.dp)
-        start.linkTo(parent.start)
-        end.linkTo(parent.end)
-    }
 }
-
 
 
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {
+
     Image(
         painter = painterResource(id = R.drawable.bg),
         contentDescription = "",
         modifier = Modifier.fillMaxSize(),
         contentScale = ContentScale.Crop
     )
+
     ConstraintLayout(mainSet, modifier = Modifier.fillMaxSize()) {
 
         val composition by rememberLottieComposition(spec = LottieCompositionSpec.RawRes(R.raw.scrolldown))
         LottieAnimation(
             composition = composition,
-            modifier = Modifier.layoutId("lottie").size(80.dp),
+            modifier = Modifier
+                .layoutId("lottie")
+                .size(80.dp),
             iterations = Int.MAX_VALUE
         )
 
-        Button(
-            onClick = {
-                viewModel.proceedToScan()
-            },
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            shape = QrButtonShape(),
+        Column(
             modifier = Modifier
-                .size(160.dp, 140.dp)
-                .layoutId("icon"),
-            elevation = ButtonDefaults.elevation(10.dp)
+                .layoutId("container")
         ) {
             Column(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = 8.dp),
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.qrcode),
-                    contentDescription = ""
-                )
+                Button(
+                    onClick = {
+                        viewModel.proceedToScan()
+                    },
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    shape = QrButtonShape(),
+                    modifier = Modifier
+                        .size(120.dp, 100.dp)
+                        .layoutId("icon"),
+                    elevation = ButtonDefaults.elevation(10.dp)
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = 20.dp, top = 6.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Image(
+                            painter = painterResource(id = R.drawable.qrcode),
+                            contentDescription = ""
+                        )
+                    }
+                }
+                Button(
+                    modifier = Modifier
+                        .width(120.dp)
+                        .height(40.dp),
+                    onClick = {
+                        viewModel.proceedToScan()
+                    },
+                    shape = RoundedCornerShape(30.dp),
+                    colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                    elevation = ButtonDefaults.elevation(10.dp)
+                ) {
+                    Text(text = "اسکن کن", fontSize = 18.sp, fontWeight = FontWeight.W900)
+                }
+            }
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(20.dp),
+                horizontalArrangement = Arrangement.Center
+            ) {
+                Text(text = "یا", fontSize = 28.sp, fontWeight = FontWeight.W900)
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .height(60.dp)
+                            .width(160.dp),
+                        value = "",
+                        onValueChange = {},
+                        shape = RoundedCornerShape(20.dp),
+                        label = {
+                            Text(text = "کد فروشگاه")
+                        }
+                    )
+                    Button(
+                        onClick = { /*TODO*/ },
+                        shape = RoundedCornerShape(20.dp),
+                        colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
+                        elevation = ButtonDefaults.elevation(10.dp)
+                    ) {
+                        Text(text = "ثبت", color = Color.Black, fontWeight = FontWeight.W900, fontSize = 18.sp)
+                    }
+                }
             }
         }
-        Button(
-            modifier = Modifier
-                .layoutId("button")
-                .width(160.dp)
-                .height(60.dp),
-            onClick = {
-                viewModel.proceedToScan()
-            },
-            shape = RoundedCornerShape(30.dp),
-            colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
-            elevation = ButtonDefaults.elevation(10.dp)
-        ) {
-            Text(text = "اسکن کن", fontSize = 26.sp, fontWeight = FontWeight.W900)
-        }
+
         Image(
             painter = painterResource(id = R.drawable.home_bottom),
             contentDescription = "",
