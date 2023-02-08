@@ -78,7 +78,8 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         credit = TakhfifdareApplication.loggedInUser.value!!.credit,
                         image = TakhfifdareApplication.loggedInUser.value!!.image,
                         email = email.value,
-                        city = city.value
+                        city = city.value,
+                        invite_code = TakhfifdareApplication.loggedInUser.value!!.invite_code
                     )
                     TakhfifdareApplication.loggedInUser.value = newUser
                     database.UserDao().deleteUsers()

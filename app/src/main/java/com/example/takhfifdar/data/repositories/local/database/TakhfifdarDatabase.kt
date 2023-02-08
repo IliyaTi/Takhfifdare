@@ -36,7 +36,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
                     TakhfifdarDatabase::class.java,
                     "TakhfifdarDatabase"
                 )
-                    .addMigrations()
+                    .addMigrations(migration3to4)
                     .build()
                 INSTANCE = instance
                 return instance
