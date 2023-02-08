@@ -365,7 +365,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
+//                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(vertical = 20.dp)
                         ) {
                             Column(
@@ -459,7 +459,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                     ) {
                         Row(
                             horizontalArrangement = Arrangement.Center,
-                            verticalAlignment = Alignment.CenterVertically,
+//                            verticalAlignment = Alignment.CenterVertically,
                             modifier = Modifier.padding(vertical = 20.dp)
                         ) {
                             Column(

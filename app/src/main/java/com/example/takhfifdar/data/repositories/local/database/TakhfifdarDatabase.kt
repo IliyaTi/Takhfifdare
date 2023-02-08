@@ -21,6 +21,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
         val migration3to4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 database.execSQL("ALTER TABLE user ADD invite_code varchar(255);")
+//                database.execSQL("ALTER TABLE user ADD invite_active bool")
             }
         }
 

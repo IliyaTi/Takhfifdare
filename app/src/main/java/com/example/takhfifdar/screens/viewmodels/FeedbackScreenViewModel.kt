@@ -27,25 +27,25 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
     val comment = mutableStateOf("")
 
     var posFeedBack = mutableStateListOf(
-        Pair("رفتار محترمانه", false),
-        Pair("ظاهر آراسته", false),
-        Pair("حفظ حریم شخصی", false),
-        Pair("محیط شیک و تمیز", false),
-        Pair("رعایت اصول بهداشتی", false),
-        Pair("رضایت از میزان تخفیف", false),
-        Pair("سرعت رسیدگی", false),
-        Pair("مشاوره و راهنمایی مناسب", false),
-        Pair("در معرض دید بود QR", false)
+        FeedbackItem("رفتار محترمانه", false, 25f),
+        FeedbackItem("ظاهر آراسته", false, 25f),
+        FeedbackItem("حفظ حریم شخصی", false, 25f),
+        FeedbackItem("محیط شیک و تمیز", false, 25f),
+        FeedbackItem("رعایت اصول بهداشتی", false, 25f),
+        FeedbackItem("رضایت از میزان تخفیف", false, 25f),
+        FeedbackItem("سرعت رسیدگی", false, 25f),
+        FeedbackItem("مشاوره و راهنمایی مناسب", false, 25f),
+        FeedbackItem("در معرض دید بود QR", false, 50f)
     )
 
     var negFeedBack = mutableStateListOf(
-        Pair("رفتار نامناسب", false),
-        Pair("ظاهر نامناسب", false),
-        Pair("عدم حفظ حریم شخصی", false),
-        Pair("شرایط نامناسب فروشگاه", false),
-        Pair("عدم رعایت اصول بهداشتی", false),
-        Pair("عدم رضایت از میزان تخفیف", false),
-        Pair("در معرض دید نبود QR", false),
+        FeedbackItem("رفتار نامناسب", false, 31f),
+        FeedbackItem("ظاهر نامناسب", false, 31f),
+        FeedbackItem("عدم حفظ حریم شخصی", false, 31f),
+        FeedbackItem("شرایط نامناسب فروشگاه", false, 31f),
+        FeedbackItem("عدم رعایت اصول بهداشتی", false, 31f),
+        FeedbackItem("عدم رضایت از میزان تخفیف", false, 31f),
+        FeedbackItem("در معرض دید نبود QR", false, 64f),
     )
 
     suspend fun sendFeedback(storeId: Int) {
@@ -55,8 +55,8 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
                 TakhfifdarDatabase.getDatabase(getApplication<Application>().applicationContext)
                     .UserDao().getUser()
             }
-            val positive = posFeedBack.count { it.second }
-            val negative = negFeedBack.count { it.second }
+            val positive = posFeedBack.count { it.checked }
+            val negative = negFeedBack.count { it.checked }
             val req = viewModelScope.async {
                 RetrofitInstance.api.sendFeedback(
                     FeedbackBody(
@@ -100,5 +100,10 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
 
     }
 
+    data class FeedbackItem(
+        val msg: String,
+        var checked: Boolean,
+        val score: Float
+    )
 
 }
