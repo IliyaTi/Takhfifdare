@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [User::class, Token::class], version = 3, exportSchema = false)
+@Database(entities = [User::class, Token::class], version = 4, exportSchema = false)
 abstract class TakhfifdarDatabase: RoomDatabase() {
 
     abstract fun UserDao(): UserDao
@@ -20,7 +20,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
 
         val migration3to4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE user ADD invite_code varchar(255);")
+                database.execSQL("ALTER TABLE user ADD COLUMN invite_code varchar(255);")
 //                database.execSQL("ALTER TABLE user ADD invite_active bool")
             }
         }
@@ -36,7 +36,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
                     TakhfifdarDatabase::class.java,
                     "TakhfifdarDatabase"
                 )
-                    .addMigrations(migration3to4)
+//                    .addMigrations(migration3to4)
                     .build()
                 INSTANCE = instance
                 return instance

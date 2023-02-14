@@ -37,11 +37,16 @@ import com.airbnb.lottie.compose.rememberLottieComposition
 import com.example.takhfifdar.R
 import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
+import com.example.takhfifdar.data.repositories.remote.network.objects.GetUserBody
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.viewmodels.HomeScreenViewModel
 import com.example.takhfifdar.ui.customShape.QrButtonShape
 import com.example.takhfifdar.views.BackdropMenuItem
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
 import kotlinx.coroutines.launch
 
 @ExperimentalMaterialApi
@@ -60,8 +65,22 @@ fun HomeScreen(
 
     LaunchedEffect(key1 = true) {
 //        LoggedInUser.user.value = TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
-        TakhfifdareApplication.loggedInUser.value =
-            TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
+        if (TakhfifdareApplication.loggedInUser.value != null) {
+            val user = CoroutineScope(Dispatchers.IO).async {
+                RetrofitInstance.api.getUser(
+                    TakhfifdarDatabase.getDatabase(context).TokenDao().getToken().token,
+                    GetUserBody(
+                        TakhfifdarDatabase.getDatabase(context).UserDao().getUser()!!.id.toString()
+                    )
+                )
+            }
+            if (user.await().isSuccessful) {
+                TakhfifdareApplication.loggedInUser.value = user.await().body()
+            } else {
+                TakhfifdareApplication.loggedInUser.value = TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
+            }
+        }
+
     }
 
     BackdropScaffold(
@@ -328,15 +347,15 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                         modifier = Modifier
                             .height(60.dp)
                             .width(160.dp),
-                        value = "",
-                        onValueChange = {},
+                        value = viewModel.storeSerial.value,
+                        onValueChange = {viewModel.storeSerial.value = it},
                         shape = RoundedCornerShape(20.dp),
                         label = {
                             Text(text = "کد فروشگاه")
                         }
                     )
                     Button(
-                        onClick = { /*TODO*/ },
+                        onClick = { viewModel.fetchStore() },
                         shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                         elevation = ButtonDefaults.elevation(10.dp)

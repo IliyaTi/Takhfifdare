@@ -1,7 +1,6 @@
 package com.example.takhfifdar.screens.viewmodels
 
 import android.app.Application
-import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -35,6 +34,8 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val phoneNumber = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.phone)
     val email = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.email)
     val city = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.city)
+    val inviteCode = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.invite_code)
+    val parentInvite = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.parent_invite)
 
     val firstNameValid = mutableStateOf(Pair(true, ""))
     val lastNameValid = mutableStateOf(Pair(true, ""))
@@ -79,7 +80,8 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         image = TakhfifdareApplication.loggedInUser.value!!.image,
                         email = email.value,
                         city = city.value,
-                        invite_code = TakhfifdareApplication.loggedInUser.value!!.invite_code
+                        invite_code = TakhfifdareApplication.loggedInUser.value!!.invite_code,
+                        parent_invite = TakhfifdareApplication.loggedInUser.value!!.parent_invite
                     )
                     TakhfifdareApplication.loggedInUser.value = newUser
                     database.UserDao().deleteUsers()

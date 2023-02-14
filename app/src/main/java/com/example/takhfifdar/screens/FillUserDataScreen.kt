@@ -1,21 +1,19 @@
 package com.example.takhfifdar.screens
 
-import android.view.RoundedCorner
 import androidx.compose.foundation.*
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
@@ -24,9 +22,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
 import androidx.constraintlayout.compose.Dimension
 import com.example.takhfifdar.R
+import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.screens.viewmodels.FillUserDataScreenViewModel
 
-@Composable()
+@Composable
 fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
 
     var monthPickerExp by remember { mutableStateOf(false) }
@@ -34,6 +33,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
 
     val set = ConstraintSet {
         val header = createRefFor("header")
+        val invite = createRefFor("invite")
         val form = createRefFor("form")
         val submit = createRefFor("submit")
 
@@ -43,6 +43,11 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
             end.linkTo(parent.end)
         }
 
+        constrain(invite) {
+            start.linkTo(parent.start, margin = 10.dp)
+            bottom.linkTo(header.bottom, margin = 10.dp)
+        }
+
         constrain(submit) {
             bottom.linkTo(parent.bottom)
             start.linkTo(parent.start)
@@ -50,22 +55,18 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
         }
 
         constrain(form) {
-            top.linkTo(header.bottom)
+            top.linkTo(parent.top)
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-            bottom.linkTo(submit.top)
+            bottom.linkTo(parent.bottom)
+            height = Dimension.fillToConstraints
         }
     }
 
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         ConstraintLayout(set, modifier = Modifier.fillMaxSize()) {
 
-            Image(
-                painter = painterResource(id = R.drawable.edit_profile_header),
-                contentDescription = "",
-                modifier = Modifier.layoutId("header"),
-                contentScale = ContentScale.Fit
-            )
+
 
             val scrollState = rememberScrollState()
 
@@ -77,6 +78,15 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     )
                     .padding(horizontal = 20.dp)
             ) {
+                
+                Spacer(modifier = Modifier.height(100.dp))
+
+                Column(modifier = Modifier
+                    .align(Alignment.Start)
+                    .padding(bottom = 20.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+                    Text(text = "کد معرف شما", color = Color.Red)
+                    Text(text = viewModel.inviteCode.value ?: "یافت نشد", color = Color.Red, fontSize = 20.sp, fontWeight = FontWeight.W900)
+                }
 
                 OutlinedTextField(
                     value = viewModel.firstName.value ?: "",
@@ -206,28 +216,50 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                         })
 
                 }
+                
                 if (!viewModel.birthDateValid.value.first) Text(viewModel.birthDateValid.value.second, color = Color.Red)
 
+                OutlinedTextField(
+                    value = if (viewModel.parentInvite.value == null) viewModel.parentInvite.value ?: "" else "شما قبلا کد معرف خود را وارد کرده اید",
+                    onValueChange = {viewModel.parentInvite.value = it},
+                    label = { Text(text = "کد معرف") },
+                    modifier = Modifier.fillMaxWidth(),
+                    enabled = (TakhfifdareApplication.loggedInUser.value?.parent_invite == null)
+                )
+
+                Spacer(modifier = Modifier.height(100.dp))
+
             }
 
-            Button(
-                onClick = {
-                    viewModel.submit()
-                },
+            Image(
+                painter = painterResource(id = R.drawable.edit_profile_header),
+                contentDescription = "",
                 modifier = Modifier
-                    .layoutId("submit")
-                    .fillMaxWidth()
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
-            ) {
-                Text(text = "ثبت اطلاعات", fontSize = 16.sp, color = Color.White)
+                    .layoutId("header")
+                    .background(Brush.verticalGradient(listOf(Color.White, Color.Transparent))),
+                contentScale = ContentScale.Fit
+            )
+
+            Box(modifier = Modifier.layoutId("submit").background(Brush.verticalGradient(listOf(Color.Transparent, Color.White)))) {
+                Button(
+                    onClick = {
+                        viewModel.submit()
+                    },
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 20.dp, vertical = 20.dp)
+                ) {
+                    Text(text = "ثبت اطلاعات", fontSize = 16.sp, color = Color.White)
+                }
             }
+
 
             // Loading indicator
             if (viewModel.loadingState.value)
                 Column(
                     modifier = Modifier
                         .fillMaxSize()
-                        .clickable {  }
+                        .clickable { }
                         .background(Color(0x80000000)),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center

@@ -8,8 +8,9 @@ data class FeedbackBody(
     val storeId: Int,
     @SerializedName("user_id")
     val userId: Int,
-    val positive: Int,
-    val negative: Int,
+//    val positive: Int,    CHANGED SINCE 1.1.2
+//    val negative: Int,    CHANGED SINCE 1.1.2
+    val score: Float,      // ADDED SINCE 1.1.2
     val reaction: Int,
     val comment: String
 )

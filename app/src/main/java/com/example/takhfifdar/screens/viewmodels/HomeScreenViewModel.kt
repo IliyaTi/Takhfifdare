@@ -7,6 +7,7 @@ import android.content.Context
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.activity.compose.ManagedActivityResultLauncher
+import androidx.compose.runtime.mutableStateOf
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.ViewModel
@@ -19,6 +20,8 @@ import com.example.takhfifdar.navigation.Navigator
 import kotlinx.coroutines.launch
 
 class HomeScreenViewModel(application: Application, private val launcher: ManagedActivityResultLauncher<String, Boolean>, val activity: Context) : AndroidViewModel(application) {
+
+    val storeSerial = mutableStateOf("")
 
     fun signOut() {
         viewModelScope.launch {
@@ -39,6 +42,10 @@ class HomeScreenViewModel(application: Application, private val launcher: Manage
             Manifest.permission.CAMERA
         )
         else Navigator.navigateTo(navTarget = NavTarget.QrScanner)
+    }
+
+    fun fetchStore() {
+
     }
 
 }

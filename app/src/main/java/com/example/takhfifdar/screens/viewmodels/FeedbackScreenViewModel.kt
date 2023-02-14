@@ -12,6 +12,7 @@ import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.data.repositories.remote.network.objects.FeedbackBody
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.async
 
 class FeedbackScreenViewModel(application: Application) : AndroidViewModel(application) {
@@ -55,15 +56,26 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
                 TakhfifdarDatabase.getDatabase(getApplication<Application>().applicationContext)
                     .UserDao().getUser()
             }
-            val positive = posFeedBack.count { it.checked }
-            val negative = negFeedBack.count { it.checked }
+//            val positive = posFeedBack.count { it.checked }
+//            val negative = negFeedBack.count { it.checked }
+
+            val scoreCalc = viewModelScope.async(Dispatchers.IO) {
+                var score = 0f
+                for (i in 0 until posFeedBack.size){
+                    if (posFeedBack[i].checked) score += posFeedBack[i].score
+                }
+                for (i in 0 until negFeedBack.size){
+                    if (negFeedBack[i].checked) score -= negFeedBack[i].score
+                }
+                return@async score
+            }
+
             val req = viewModelScope.async {
                 RetrofitInstance.api.sendFeedback(
                     FeedbackBody(
                         storeId = storeId,
                         userId = userId.await()!!.id,
-                        positive = positive,
-                        negative = negative,
+                        score = scoreCalc.await(),
                         reaction = selectedRate.value,
                         comment = comment.value
                     ),

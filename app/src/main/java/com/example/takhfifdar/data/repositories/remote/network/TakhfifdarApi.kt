@@ -1,5 +1,6 @@
 package com.example.takhfifdar.data.repositories.remote.network
 
+import com.example.takhfifdar.data.repositories.local.database.Store
 import com.example.takhfifdar.data.repositories.local.database.User
 import com.example.takhfifdar.data.repositories.remote.network.objects.*
 import retrofit2.Response
@@ -41,5 +42,13 @@ interface TakhfifdarApi {
     @Headers("Accept: application/json")
     @POST("api/api/userApi")
     suspend fun getUser(@Header("Authorization") token: String, @Body body: GetUserBody): Response<User>
+
+    @Headers("Accept: application/json")
+    @POST("api/api/serialStore")
+    suspend fun serialStore(@Header("Authorization") token: String, @Body body: SerialStoreBody): Response<Store>
+
+    @Headers("Accept: application/json")
+    @POST("api/api/serial")
+    suspend fun serial(@Header("Authorization") token: String, @Body body: SerialBody)
 
 }

@@ -380,7 +380,7 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         modifier = Modifier.padding(6.dp)
                                     ) {
                                         Text(
-                                            text = viewModel.negFeedBack[i].first,
+                                            text = viewModel.negFeedBack[i].msg,
                                             fontSize = 14.sp
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
@@ -390,11 +390,17 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                                     0xff009245
                                                 )
                                             ),
-                                            checked = viewModel.negFeedBack[i].second,
+                                            checked = viewModel.negFeedBack[i].checked,
                                             onCheckedChange = {
-                                                viewModel.negFeedBack[i] = Pair(
-                                                    viewModel.negFeedBack[i].first,
-                                                    !viewModel.negFeedBack[i].second
+                                                viewModel.negFeedBack[i] =
+//                                                    Pair(
+//                                                        viewModel.negFeedBack[i].msg,
+//                                                        !viewModel.negFeedBack[i].checked
+//                                                    )
+                                                FeedbackScreenViewModel.FeedbackItem(
+                                                    msg = viewModel.negFeedBack[i].msg,
+                                                    checked = !viewModel.negFeedBack[i].checked,
+                                                    score = viewModel.negFeedBack[i].score
                                                 )
                                             },
                                             modifier = Modifier.size(20.dp)
@@ -416,21 +422,27 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         modifier = Modifier.padding(6.dp)
                                     ) {
                                         Text(
-                                            text = viewModel.negFeedBack[i].first,
+                                            text = viewModel.negFeedBack[i].msg,
                                             fontSize = 14.sp
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Checkbox(
-                                            checked = viewModel.negFeedBack[i].second,
+                                            checked = viewModel.negFeedBack[i].checked,
                                             colors = CheckboxDefaults.colors(
                                                 checkedColor = Color(
                                                     0xff009245
                                                 )
                                             ),
                                             onCheckedChange = {
-                                                viewModel.negFeedBack[i] = Pair(
-                                                    viewModel.negFeedBack[i].first,
-                                                    !viewModel.negFeedBack[i].second
+                                                viewModel.negFeedBack[i] =
+//                                                    Pair(
+//                                                        viewModel.negFeedBack[i].msg,
+//                                                        !viewModel.negFeedBack[i].checked
+//                                                    )
+                                                FeedbackScreenViewModel.FeedbackItem(
+                                                    viewModel.negFeedBack[i].msg,
+                                                    !viewModel.negFeedBack[i].checked,
+                                                    viewModel.negFeedBack[i].score
                                                 )
                                             },
                                             modifier = Modifier.size(20.dp)
@@ -474,21 +486,27 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         modifier = Modifier.padding(6.dp)
                                     ) {
                                         Text(
-                                            text = viewModel.posFeedBack[i].first,
+                                            text = viewModel.posFeedBack[i].msg,
                                             fontSize = 14.sp
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Checkbox(
-                                            checked = viewModel.posFeedBack[i].second,
+                                            checked = viewModel.posFeedBack[i].checked,
                                             colors = CheckboxDefaults.colors(
                                                 checkedColor = Color(
                                                     0xff009245
                                                 )
                                             ),
                                             onCheckedChange = {
-                                                viewModel.posFeedBack[i] = Pair(
-                                                    viewModel.posFeedBack[i].first,
-                                                    !viewModel.posFeedBack[i].second
+                                                viewModel.posFeedBack[i] =
+//                                                    Pair(
+//                                                        viewModel.posFeedBack[i].first,
+//                                                        !viewModel.posFeedBack[i].second
+//                                                    )
+                                                FeedbackScreenViewModel.FeedbackItem(
+                                                    msg = viewModel.posFeedBack[i].msg,
+                                                    checked = !viewModel.posFeedBack[i].checked,
+                                                    score = viewModel.posFeedBack[i].score
                                                 )
                                             },
                                             modifier = Modifier.size(20.dp)
@@ -510,21 +528,27 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
                                         modifier = Modifier.padding(6.dp)
                                     ) {
                                         Text(
-                                            text = viewModel.posFeedBack[i].first,
+                                            text = viewModel.posFeedBack[i].msg,
                                             fontSize = 14.sp
                                         )
                                         Spacer(modifier = Modifier.width(12.dp))
                                         Checkbox(
-                                            checked = viewModel.posFeedBack[i].second,
+                                            checked = viewModel.posFeedBack[i].checked,
                                             colors = CheckboxDefaults.colors(
                                                 checkedColor = Color(
                                                     0xff009245
                                                 )
                                             ),
                                             onCheckedChange = {
-                                                viewModel.posFeedBack[i] = Pair(
-                                                    viewModel.posFeedBack[i].first,
-                                                    !viewModel.posFeedBack[i].second
+                                                viewModel.posFeedBack[i] =
+//                                                    Pair(
+//                                                        viewModel.posFeedBack[i].first,
+//                                                        !viewModel.posFeedBack[i].second
+//                                                    )
+                                                FeedbackScreenViewModel.FeedbackItem(
+                                                    msg = viewModel.posFeedBack[i].msg,
+                                                    checked = !viewModel.posFeedBack[i].checked,
+                                                    score = viewModel.posFeedBack[i].score
                                                 )
                                             },
                                             modifier = Modifier.size(20.dp)

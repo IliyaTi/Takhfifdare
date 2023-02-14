@@ -17,5 +17,6 @@ data class User(
     var image: String? = "",
     var email: String? = "",
     var city: String? = "",
-    val invite_code: String
+    var invite_code: String? = "",
+    var parent_invite: String? = ""
 )
