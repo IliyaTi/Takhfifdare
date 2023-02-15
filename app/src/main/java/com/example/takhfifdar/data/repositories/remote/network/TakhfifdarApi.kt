@@ -45,10 +45,10 @@ interface TakhfifdarApi {
 
     @Headers("Accept: application/json")
     @POST("api/api/serialStore")
-    suspend fun serialStore(@Header("Authorization") token: String, @Body body: SerialStoreBody): Response<Store>
+    suspend fun serialStore(@Header("Authorization") token: String, @Body body: SerialStoreBody): Response<SerialStoreResponse>
 
     @Headers("Accept: application/json")
     @POST("api/api/serial")
-    suspend fun serial(@Header("Authorization") token: String, @Body body: SerialBody)
+    suspend fun serial(@Header("Authorization") token: String, @Body body: SerialBody): Response<QrResponse>
 
 }

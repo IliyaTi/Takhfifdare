@@ -6,7 +6,6 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
@@ -355,7 +354,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                         }
                     )
                     Button(
-                        onClick = { viewModel.fetchStore() },
+                        onClick = { viewModel.onSerialButtonClick() },
                         shape = RoundedCornerShape(20.dp),
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                         elevation = ButtonDefaults.elevation(10.dp)
