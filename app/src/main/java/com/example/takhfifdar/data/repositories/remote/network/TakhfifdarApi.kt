@@ -4,10 +4,7 @@ import com.example.takhfifdar.data.repositories.local.database.Store
 import com.example.takhfifdar.data.repositories.local.database.User
 import com.example.takhfifdar.data.repositories.remote.network.objects.*
 import retrofit2.Response
-import retrofit2.http.Body
-import retrofit2.http.Header
-import retrofit2.http.Headers
-import retrofit2.http.POST
+import retrofit2.http.*
 
 interface TakhfifdarApi {
 
@@ -50,5 +47,10 @@ interface TakhfifdarApi {
     @Headers("Accept: application/json")
     @POST("api/api/serial")
     suspend fun serial(@Header("Authorization") token: String, @Body body: SerialBody): Response<QrResponse>
+
+    @Headers("Accept: application/json")
+    @GET("api/api/version")
+    suspend fun version(): Response<VersionResponse>
+
 
 }

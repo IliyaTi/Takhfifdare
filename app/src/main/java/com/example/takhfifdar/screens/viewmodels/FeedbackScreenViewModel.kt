@@ -23,7 +23,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
 
     val selectedTab = mutableStateOf(1)
 
-    val selectedRate = mutableStateOf(0)
+    val selectedRate = mutableStateOf(1)
 
     val comment = mutableStateOf("")
 

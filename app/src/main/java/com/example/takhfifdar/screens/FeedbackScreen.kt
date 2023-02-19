@@ -622,7 +622,12 @@ fun FeedbackScreen(vendor: String, viewModel: FeedbackScreenViewModel) {
             ) {
 
                 Column {
-                    
+                    // TODO: FUCKING TO DO
+                    CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                        Box(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp)) {
+                            Text(text = "این ماشین حساب صرفا برای محاسبه تخفیف فروشگاه توسط شما تعبیه شده است", textAlign = TextAlign.Center)
+                        }
+                    }
                     Row(
                         Modifier
                             .fillMaxWidth()

@@ -1,6 +1,7 @@
 package com.example.takhfifdar.data.repositories.local.database
 
 import com.google.gson.annotations.SerializedName
+import java.math.BigInteger
 import java.sql.Timestamp
 
 data class Store(
@@ -20,9 +21,9 @@ data class Store(
     val city: String,
     val place: String,
     val address: String,
-    val phone: Int,
+    val phone: BigInteger,
     val email: String?,
-    val second_phone: Int,
+    val second_phone: BigInteger?,
     @SerializedName("seller_id")
     val sellerId: Int,
     val serial: String,

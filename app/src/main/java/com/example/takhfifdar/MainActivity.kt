@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.core.net.toUri
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.NavType
@@ -34,6 +35,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
+import androidx.test.core.app.launchActivity
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
@@ -143,16 +145,18 @@ fun NavigationComponent(
         }
 
         composable("SplashScreen") {
-            SplashScreen(database)
+            SplashScreen(database) {
+                UpdateDialog(activity)
+            }
         }
 
         composable("BuyCouponScreen") {
             BuyCouponScreen(viewModel<BuyCouponScreenViewMode>())
         }
 
-        composable("dial") {
-            UpdateDialog()
-        }
+//        composable("dial") {
+//            UpdateDialog()
+//        }
 
         composable(
             route = "PaymentResult",
@@ -176,18 +180,21 @@ fun NavigationComponent(
 
 
 @Composable
-fun UpdateDialog() {
+fun UpdateDialog(activity: Activity) {
     CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
         AlertDialog(
-            onDismissRequest = { /*TODO*/ },
+            onDismissRequest = { activity.finishAndRemoveTask() },
             confirmButton = {
-                Button(onClick = { /*TODO*/ }) {
-                    Text(text = "بروزرسانی")
+                Button(onClick = {
+                    val intent = Intent(Intent.ACTION_VIEW, "https://takhfifdare.com/application/Takhfifdare.apk".toUri())
+                    activity.startActivity(intent)
+                }) {
+                    Text(text = "بروزرسانی", color = Color.White)
                 }
             },
             dismissButton = {
-                OutlinedButton(onClick = { /*TODO*/ }) {
-                    Text(text = "انصراف")
+                OutlinedButton(onClick = { activity.finishAndRemoveTask() }) {
+                    Text(text = "انصراف", color = Color.Black)
                 }
             },
             text = {
@@ -195,10 +202,10 @@ fun UpdateDialog() {
                     Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(imageVector = Icons.Filled.Update, contentDescription = "")
                         Spacer(modifier = Modifier.width(10.dp))
-                        Text(text = "بروزرسانی", fontSize = 22.sp, fontWeight = FontWeight.Bold)
+                        Text(text = "بروزرسانی", fontSize = 22.sp, fontWeight = FontWeight.Bold, color = Color.Black)
                     }
                     Spacer(modifier = Modifier.height(16.dp))
-                    Text(text = "در سیستم ما تغییرات عمده ای صورت گرفته و ادامه فعالیت برنامه نیازمند بروزرسانی است. لطفا جهت استفاده از برنامه آن را بروزرسانی کنید.")
+                    Text(text = "در سیستم ما تغییرات عمده ای صورت گرفته و ادامه فعالیت برنامه نیازمند بروزرسانی است. لطفا جهت استفاده از برنامه آن را بروزرسانی کنید.", color = Color.Black)
                 }
             },
 

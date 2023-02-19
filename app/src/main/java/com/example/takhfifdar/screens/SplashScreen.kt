@@ -9,8 +9,7 @@ import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Warning
 import androidx.compose.material.icons.filled.WifiOff
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -18,38 +17,59 @@ import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import com.example.takhfifdar.BuildConfig
 import com.example.takhfifdar.R
 import com.example.takhfifdar.TakhfifdareApplication
+import com.example.takhfifdar.UpdateDialog
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.util.Connection
 import com.example.takhfifdar.util.Connection.connectivityState
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.launch
 
 
 @OptIn(ExperimentalCoroutinesApi::class)
 @Composable
-fun SplashScreen(database: TakhfifdarDatabase) {
+fun SplashScreen(database: TakhfifdarDatabase, versionDialog: @Composable () -> Unit) {
 
     val state = connectivityState()
+    val scope = rememberCoroutineScope()
+    val showUpdateDialog = remember {
+        mutableStateOf(false)
+    }
 
     Image(painter = painterResource(id = R.drawable.splash), contentDescription = "", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
 
 
     if (state.value == Connection.ConnectionState.Available) {
-        LaunchedEffect(false) {
+        LaunchedEffect(showUpdateDialog.value) {
 
-            val user = database.UserDao().getUser()
+            scope.launch(Dispatchers.IO) {
+                val ver = RetrofitInstance.api.version()
+                if (ver.isSuccessful) {
+                    if (BuildConfig.VERSION_CODE >= ver.body()!!.min) {
+                        val user = database.UserDao().getUser()
 
-            if (user != null) {
-                TakhfifdareApplication.loggedInUser.value = user
+                        if (user != null) {
+                            TakhfifdareApplication.loggedInUser.value = user
+                        }
+                        Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
+                    } else {
+                        showUpdateDialog.value = true
+                    }
+                }
             }
-            Navigator.navigateTo(navTarget = NavTarget.HomeScreen)
+
+
         }
     }
 
-
+    if (showUpdateDialog.value)
+        versionDialog()
 
 }
 

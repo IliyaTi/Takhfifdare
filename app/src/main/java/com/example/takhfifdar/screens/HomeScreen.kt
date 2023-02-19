@@ -8,6 +8,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -22,6 +23,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -349,6 +351,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                         value = viewModel.storeSerial.value,
                         onValueChange = {viewModel.storeSerial.value = it},
                         shape = RoundedCornerShape(20.dp),
+                        keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                         label = {
                             Text(text = "کد فروشگاه")
                         }
@@ -359,7 +362,10 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                         colors = ButtonDefaults.buttonColors(backgroundColor = Color.White),
                         elevation = ButtonDefaults.elevation(10.dp)
                     ) {
-                        Text(text = "ثبت", color = Color.Black, fontWeight = FontWeight.W900, fontSize = 18.sp)
+                        if (viewModel.serialLoading.value)
+                            CircularProgressIndicator(color = Color.Black, strokeWidth = 2.dp)
+                        else
+                            Text(text = "ثبت", color = Color.Black, fontWeight = FontWeight.W900, fontSize = 18.sp)
                     }
                 }
             }

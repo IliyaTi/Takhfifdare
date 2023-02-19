@@ -21,6 +21,12 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val loadingState = mutableStateOf(false)
 
     val months = listOf("ماه", "فروردین", "اردیبهشت", "خرداد", "تیر", "مرداد", "شهریور", "مهر", "آبان", "آذر", "دی", "بهمن", "اسفند")
+    val cities = listOf(
+        "تهران", "البرز", "سمنان", "قم", "کرمانشاه", "اصفهان", "شیراز", "تبریز", "قزوین", "مرکزی",
+        "همدان", "لرستان", "ایلام", "کردستان", "زنجان", "گیلان", "مازندران", "اردبیل", "آذربایجان شرقی",
+        "آذربایجان غربی", "گلستان", "خراسان جنوبی", "خراسان شمالی", "خراسان رضوی", "چهارمحال و بختیاری",
+        "خوزستان", "کهکیلویه و بویراحمد", "بوشهر", "هرمزگان", "کرمان", "یزد", "سیستان و بلوچستان"
+    )
 
     val userBD = TakhfifdareApplication.loggedInUser.value!!.birth_date
 
@@ -33,7 +39,7 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val username = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.name)
     val phoneNumber = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.phone)
     val email = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.email)
-    val city = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.city)
+    val city = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.city ?: cities.first())
     val inviteCode = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.invite_code)
     val parentInvite = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.parent_invite)
 
@@ -81,7 +87,8 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         email = email.value,
                         city = city.value,
                         invite_code = TakhfifdareApplication.loggedInUser.value!!.invite_code,
-                        parent_invite = TakhfifdareApplication.loggedInUser.value!!.parent_invite
+                        parent_invite = TakhfifdareApplication.loggedInUser.value!!.parent_invite,
+                        score = TakhfifdareApplication.loggedInUser.value!!.score
                     )
                     TakhfifdareApplication.loggedInUser.value = newUser
                     database.UserDao().deleteUsers()

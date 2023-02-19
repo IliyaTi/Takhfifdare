@@ -20,10 +20,13 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
 
         val migration3to4 = object : Migration(3, 4) {
             override fun migrate(database: SupportSQLiteDatabase) {
-                database.execSQL("ALTER TABLE user ADD COLUMN invite_code varchar(255);")
-//                database.execSQL("ALTER TABLE user ADD invite_active bool")
+                database.execSQL("ALTER TABLE user_table ADD COLUMN invite_code varchar(255);")
+                database.execSQL("ALTER TABLE user_table ADD COLUMN parent_invite varchar(255);")
+                database.execSQL("ALTER TABLE user_table ADD COLUMN score INTEGER;")
             }
         }
+
+
 
         fun getDatabase(context: Context): TakhfifdarDatabase {
             val tempInstance = INSTANCE
@@ -36,7 +39,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
                     TakhfifdarDatabase::class.java,
                     "TakhfifdarDatabase"
                 )
-//                    .addMigrations(migration3to4)
+                    .addMigrations(migration3to4)
                     .build()
                 INSTANCE = instance
                 return instance

@@ -29,6 +29,7 @@ import com.example.takhfifdar.screens.viewmodels.FillUserDataScreenViewModel
 fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
 
     var monthPickerExp by remember { mutableStateOf(false) }
+    var cityPickerExpanded by remember{ mutableStateOf(false) }
 
 
     val set = ConstraintSet {
@@ -158,17 +159,40 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     modifier = Modifier.fillMaxWidth()
                 )
 
-                OutlinedTextField(
-                    value = viewModel.city.value ?: "",
-                    onValueChange = { viewModel.city.value = it },
-                    label = {
-                        Row {
-                            Text(text = "شهر")
-                            Text(text = "*", color = Color.Red)
+//                OutlinedTextField(
+//                    value = viewModel.city.value ?: "",
+//                    onValueChange = { viewModel.city.value = it },
+//                    label = {
+//                        Row {
+//                            Text(text = "شهر")
+//                            Text(text = "*", color = Color.Red)
+//                        }
+//                    },
+//                    modifier = Modifier.fillMaxWidth()
+//                )
+                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                    Text(text = "شهر", fontWeight = FontWeight.SemiBold, color = Color.Black)
+                    Text(text = "*", color = Color.Red)
+                    Spacer(modifier = Modifier.width(20.dp))
+                    Box {
+                        OutlinedButton(onClick = { cityPickerExpanded = !cityPickerExpanded }, Modifier.height(IntrinsicSize.Max)) {
+                            Text(text = viewModel.city.value, color = Color.Blue)
                         }
-                    },
-                    modifier = Modifier.fillMaxWidth()
-                )
+                        DropdownMenu(
+                            expanded = cityPickerExpanded,
+                            onDismissRequest = { cityPickerExpanded = false }) {
+                            viewModel.cities.forEach { label ->
+                                DropdownMenuItem(onClick = {
+                                    cityPickerExpanded = false
+                                    viewModel.city.value = label
+                                }) {
+                                    Text(text = label)
+                                }
+                            }
+                        }
+                    }
+                }
+
                 if (!viewModel.cityValid.value.first) Text(
                     text = viewModel.cityValid.value.second,
                     color = Color.Red
@@ -240,7 +264,9 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 contentScale = ContentScale.Fit
             )
 
-            Box(modifier = Modifier.layoutId("submit").background(Brush.verticalGradient(listOf(Color.Transparent, Color.White)))) {
+            Box(modifier = Modifier
+                .layoutId("submit")
+                .background(Brush.verticalGradient(listOf(Color.Transparent, Color.White)))) {
                 Button(
                     onClick = {
                         viewModel.submit()

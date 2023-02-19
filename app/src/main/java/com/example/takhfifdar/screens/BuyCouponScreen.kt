@@ -27,6 +27,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.ConstraintSet
+import androidx.constraintlayout.compose.Dimension
 import com.example.takhfifdar.R
 import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.screens.viewmodels.BuyCouponScreenViewMode
@@ -82,7 +83,16 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
         Spacer(modifier = Modifier.height(20.dp))
         CouponCard(
             context = context,
-            value = 50000,
+            value = 12000,
+            count = 1,
+            username = viewModel.fullName,
+            pic = R.drawable.card_00,
+            discount = viewModel.discountPercentage.value,
+            viewModel = viewModel
+        )
+        CouponCard(
+            context = context,
+            value = 55000,
             count = 5,
             username = viewModel.fullName,
             pic = R.drawable.card_03,
@@ -100,7 +110,7 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
         )
         CouponCard(
             context = context,
-            value = 150000,
+            value = 140000,
             count = 15,
             username = viewModel.fullName,
             pic = R.drawable.card_01,

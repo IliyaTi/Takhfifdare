@@ -18,5 +18,6 @@ data class User(
     var email: String? = "",
     var city: String? = "",
     var invite_code: String? = "",
-    var parent_invite: String? = ""
+    var parent_invite: String? = "",
+    var score: Int?
 )
