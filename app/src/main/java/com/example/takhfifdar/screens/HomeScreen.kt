@@ -44,6 +44,7 @@ import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
 import com.example.takhfifdar.screens.viewmodels.HomeScreenViewModel
 import com.example.takhfifdar.ui.customShape.QrButtonShape
+import com.example.takhfifdar.util.NumberUnicodeAdapter
 import com.example.takhfifdar.views.BackdropMenuItem
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -105,36 +106,43 @@ fun HomeScreen(
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
                         modifier = Modifier.fillMaxWidth(),
-                        verticalAlignment = Alignment.CenterVertically
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween
                     ) {
-                        IconButton(
-                            onClick = {
-                                scope.launch {
-                                    if (backdropState.isConcealed) backdropState.reveal()
-                                    else backdropState.conceal()
-                                }
-                            },
-                        ) {
-                            Image(
-                                painter = painterResource(id = R.drawable.logo),
-                                contentDescription = "",
-                                modifier = Modifier
-                                    .height(30.dp)
-                                    .height(BackdropScaffoldDefaults.PeekHeight)
-                                    .padding(2.dp),
-                                colorFilter = ColorFilter.tint(Color.White)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            IconButton(
+                                onClick = {
+                                    scope.launch {
+                                        if (backdropState.isConcealed) backdropState.reveal()
+                                        else backdropState.conceal()
+                                    }
+                                },
+                            ) {
+                                Image(
+                                    painter = painterResource(id = R.drawable.logo),
+                                    contentDescription = "",
+                                    modifier = Modifier
+                                        .height(30.dp)
+                                        .height(BackdropScaffoldDefaults.PeekHeight)
+                                        .padding(2.dp),
+                                    colorFilter = ColorFilter.tint(Color.White)
+                                )
+                            }
+                            Spacer(modifier = Modifier.width(10.dp))
+                            Text(
+                                text = "تخفیف داره",
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 18.sp,
+                                color = Color.White
                             )
                         }
-                        Spacer(modifier = Modifier.width(10.dp))
-                        Text(
-                            text = "تخفیف داره",
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 18.sp,
-                            color = Color.White
-                        )
-                        
-                        Text(text = "")
-                        
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 10.dp)) {
+                                Text(text = "امتیاز شما :", color = Color.White)
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value!!.score.toString()), color = Color.White)
+                            }
+                        }
                     }
                     Row(
                         modifier = Modifier
@@ -152,13 +160,18 @@ fun HomeScreen(
                                 color = Color.White
                             )
                         }
-                        Row {
-                            Icon(imageVector = Icons.Default.Payments, contentDescription = "")
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = TakhfifdareApplication.loggedInUser.value?.credit
-                                    ?: "اعتبار", color = Color.White
-                            )
+                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                            Row {
+                                Text("اعتبار شما :", color = Color.White)
+                                Spacer(modifier = Modifier.width(10.dp))
+                                Text(
+                                    text =
+                                    if (TakhfifdareApplication.loggedInUser.value != null)
+                                        NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value?.credit!!)
+                                    else "0",
+                                    color = Color.White
+                                )
+                            }
                         }
                     }
                 }
