@@ -205,7 +205,7 @@ fun Page2() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "در تخفیف داره میتوانید فقط با خرید یک کوپن، کالا های مورد نظر خودتان را تا سقف ۸۰٪ خریداری کنید.",
+                text = "در تخفیف داره میتوانید فقط با خرید یک کوپن، کالا های مورد نظر خودتان را تا سقف ۸۰٪ تخفیف خریداری کنید.",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
@@ -231,7 +231,7 @@ fun Page3() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "در پنل شما امکان خرید سه نوع کارت فراهم شده است که هر کدام از کارت ها دارای تعداد مختلفی کوپن تخفیف هستند.",
+                text = "در پنل شما امکان خرید انواع کارت فراهم شده است که هر کدام از کارت ها دارای تعداد مختلفی کوپن تخفیف هستند.",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold,
                 textAlign = TextAlign.Center
@@ -258,7 +258,7 @@ fun Page4() {
             verticalArrangement = Arrangement.Center
         ) {
             Text(
-                text = "تخفیف داره، بدون محدودیت مکانی خدمات خود را با پوشش دهی در سطح تهران و کرج به شما ارایه میدهد.",
+                text = "تخفیف داره، بدون محدودیت مکانی خدمات خود را با پوشش دهی در سطح کشور به شما ارایه میدهد.",
                 textAlign = TextAlign.Center,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.SemiBold

@@ -170,7 +170,9 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
 //                    },
 //                    modifier = Modifier.fillMaxWidth()
 //                )
-                Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 20.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
+                Row(modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 20.dp, vertical = 10.dp), verticalAlignment = Alignment.CenterVertically) {
                     Text(text = "شهر", fontWeight = FontWeight.SemiBold, color = Color.Black)
                     Text(text = "*", color = Color.Red)
                     Spacer(modifier = Modifier.width(20.dp))
@@ -243,13 +245,33 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 
                 if (!viewModel.birthDateValid.value.first) Text(viewModel.birthDateValid.value.second, color = Color.Red)
 
-                OutlinedTextField(
-                    value = if (viewModel.parentInvite.value == null) viewModel.parentInvite.value ?: "" else "شما قبلا کد معرف خود را وارد کرده اید",
-                    onValueChange = {viewModel.parentInvite.value = it},
-                    label = { Text(text = "کد معرف") },
-                    modifier = Modifier.fillMaxWidth(),
-                    enabled = (TakhfifdareApplication.loggedInUser.value?.parent_invite == null)
-                )
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    OutlinedTextField(
+                        value =
+                        if (viewModel.parentInviteEnabled.value) viewModel.parentInvite.value ?: "" else "شما قبلا کد معرف خود را وارد کرده اید",
+                        onValueChange = { viewModel.parentInvite.value = it },
+                        label = { Text(text = "کد معرف") },
+                        enabled = viewModel.parentInviteEnabled.value,
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                    Button(
+                        onClick = { viewModel.submitParentInvite() },
+                        modifier = Modifier.height(IntrinsicSize.Max),
+                        enabled = viewModel.parentInviteEnabled.value
+                    ) {
+                        if (!viewModel.parentInviteLoading.value)
+                            Text(text = "ثبت", color = Color.White)
+                        else
+                            CircularProgressIndicator(modifier = Modifier.size(30.dp), color = Color.White)
+                    }
+                }
+
+                if (!viewModel.inviteCodeValid.value.first)
+                    Text(text = viewModel.inviteCodeValid.value.second, color = Color.Red)
+
+                if (viewModel.parentInviteSubmitted.value)
+                    Text(text = "کد معرفی با موفقیت ثبت شد", color = Color(0xFF0C7400))
+                
 
                 Spacer(modifier = Modifier.height(100.dp))
 

@@ -132,6 +132,9 @@ fun HomeScreen(
                             fontSize = 18.sp,
                             color = Color.White
                         )
+                        
+                        Text(text = "")
+                        
                     }
                     Row(
                         modifier = Modifier
@@ -347,7 +350,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                     OutlinedTextField(
                         modifier = Modifier
                             .height(60.dp)
-                            .width(160.dp),
+                            .fillMaxWidth(.7f),
                         value = viewModel.storeSerial.value,
                         onValueChange = {viewModel.storeSerial.value = it},
                         shape = RoundedCornerShape(20.dp),

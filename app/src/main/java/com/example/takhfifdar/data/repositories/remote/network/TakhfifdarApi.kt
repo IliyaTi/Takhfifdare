@@ -52,5 +52,9 @@ interface TakhfifdarApi {
     @GET("api/api/version")
     suspend fun version(): Response<VersionResponse>
 
+    @Headers("Accept: application/json")
+    @POST("api/api/invite-code")
+    suspend fun inviteCode(@Header("Authorization") token: String, @Body body: InviteCodeBody): Response<InviteCodeResponse>
+
 
 }

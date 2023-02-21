@@ -21,7 +21,7 @@ class FeedbackScreenViewModel(application: Application) : AndroidViewModel(appli
 
     val openDialog = mutableStateOf(false)
 
-    val selectedTab = mutableStateOf(1)
+    val selectedTab = mutableStateOf(2)
 
     val selectedRate = mutableStateOf(1)
 

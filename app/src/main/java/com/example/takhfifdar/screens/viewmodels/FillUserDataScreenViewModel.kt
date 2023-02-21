@@ -10,8 +10,10 @@ import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabas
 import com.example.takhfifdar.data.repositories.local.database.User
 import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.data.repositories.remote.network.objects.EditProfileBody
+import com.example.takhfifdar.data.repositories.remote.network.objects.InviteCodeBody
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(application) {
@@ -42,6 +44,10 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val city = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.city ?: cities.first())
     val inviteCode = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.invite_code)
     val parentInvite = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.parent_invite)
+    val parentInviteEnabled = mutableStateOf(TakhfifdareApplication.loggedInUser.value?.parent_invite == null)
+    val parentInviteSubmitted = mutableStateOf(false)
+
+    val parentInviteLoading = mutableStateOf(false)
 
     val firstNameValid = mutableStateOf(Pair(true, ""))
     val lastNameValid = mutableStateOf(Pair(true, ""))
@@ -50,6 +56,7 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
     val emailValid = mutableStateOf(Pair(true, ""))
     val cityValid = mutableStateOf(Pair(true, ""))
     val birthDateValid = mutableStateOf(Pair(true, ""))
+    val inviteCodeValid = mutableStateOf(Pair(true, ""))
 
     fun submit() {
         val isValid = formValidation()
@@ -87,7 +94,7 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
                         email = email.value,
                         city = city.value,
                         invite_code = TakhfifdareApplication.loggedInUser.value!!.invite_code,
-                        parent_invite = TakhfifdareApplication.loggedInUser.value!!.parent_invite,
+                        parent_invite = parentInvite.value,
                         score = TakhfifdareApplication.loggedInUser.value!!.score
                     )
                     TakhfifdareApplication.loggedInUser.value = newUser
@@ -113,6 +120,35 @@ class FillUserDataScreenViewModel(application: Application) : AndroidViewModel(a
 
         }
 
+    }
+
+    fun submitParentInvite() {
+        viewModelScope.launch(Dispatchers.IO) {
+            parentInviteLoading.value = true
+            val call = RetrofitInstance.api.inviteCode(
+                "Bearer " + database.TokenDao().getToken().token,
+                InviteCodeBody(
+                    id = TakhfifdareApplication.loggedInUser.value!!.id,
+                    invite_code = parentInvite.value!!
+                )
+            )
+            if (call.isSuccessful) {
+                inviteCodeValid.value = Pair(true, "")
+                TakhfifdareApplication.loggedInUser.value!!.parent_invite = parentInvite.value
+                TakhfifdarDatabase.getDatabase(getApplication()).UserDao().updateUser(
+                    TakhfifdareApplication.loggedInUser.value!!
+                )
+                parentInviteSubmitted.value = true
+                parentInviteEnabled.value = false
+                parentInviteLoading.value = false
+            } else if (call.code() == 404) {
+                inviteCodeValid.value = Pair(false, "کاربری با این کد معرفی وجود ندارد")
+                parentInviteLoading.value = false
+            } else {
+                inviteCodeValid.value = Pair(false, "مشکل ناشناخته ای رخ داد")
+                parentInviteLoading.value = false
+            }
+        }
     }
 
 
