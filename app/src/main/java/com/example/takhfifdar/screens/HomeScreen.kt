@@ -140,7 +140,8 @@ fun HomeScreen(
                             Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 10.dp)) {
                                 Text(text = "امتیاز شما :", color = Color.White)
                                 Spacer(modifier = Modifier.width(10.dp))
-                                Text(text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value!!.score.toString()), color = Color.White)
+                                //TODO
+//                                Text(text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value!!.score.toString()), color = Color.White)
                             }
                         }
                     }
@@ -208,6 +209,13 @@ fun HomeScreen(
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://seller.takhfifdare.com/Otp/index")
+                )
+                context.startActivity(intent)
+            }
+            BackdropMenuItem(title = "بازاریابان", icon = Icons.Default.MonetizationOn) {
+                val intent = Intent(
+                    Intent.ACTION_VIEW,
+                    Uri.parse("https://marketer.takhfifdare.com/Register/index")
                 )
                 context.startActivity(intent)
             }

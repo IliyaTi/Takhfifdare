@@ -4,6 +4,8 @@ import androidx.compose.foundation.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -179,6 +181,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     Box {
                         OutlinedButton(onClick = { cityPickerExpanded = !cityPickerExpanded }, Modifier.height(IntrinsicSize.Max)) {
                             Text(text = viewModel.city.value, color = Color.Blue)
+                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                         }
                         DropdownMenu(
                             expanded = cityPickerExpanded,
@@ -219,6 +222,7 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     Box {
                         OutlinedButton(onClick = { monthPickerExp = !monthPickerExp }, Modifier.height(IntrinsicSize.Max)) {
                             Text(text = viewModel.monthPicker.value, color = Color.Blue)
+                            Icon(imageVector = Icons.Default.ArrowDropDown, contentDescription = "")
                         }
                         DropdownMenu(
                             expanded = monthPickerExp,
@@ -245,8 +249,9 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                 
                 if (!viewModel.birthDateValid.value.first) Text(viewModel.birthDateValid.value.second, color = Color.Red)
 
-                Row(verticalAlignment = Alignment.CenterVertically) {
+                Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.fillMaxWidth()) {
                     OutlinedTextField(
+                        modifier = Modifier.weight(4f),
                         value =
                         if (viewModel.parentInviteEnabled.value) viewModel.parentInvite.value ?: "" else "شما قبلا کد معرف خود را وارد کرده اید",
                         onValueChange = { viewModel.parentInvite.value = it },
@@ -256,7 +261,9 @@ fun FillUserDataScreen(viewModel: FillUserDataScreenViewModel) {
                     Spacer(modifier = Modifier.width(10.dp))
                     Button(
                         onClick = { viewModel.submitParentInvite() },
-                        modifier = Modifier.height(IntrinsicSize.Max),
+                        modifier = Modifier
+                            .height(IntrinsicSize.Max)
+                            .weight(1f),
                         enabled = viewModel.parentInviteEnabled.value
                     ) {
                         if (!viewModel.parentInviteLoading.value)
