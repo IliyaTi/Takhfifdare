@@ -106,7 +106,7 @@ fun NavigationComponent(
             }
         }.launchIn(this)
     }
-    NavHost(navController = navController, startDestination = "SplashScreen") {
+    NavHost(navController = navController, startDestination = NavTarget.SplashScreen.label) {
 
         composable("HomeScreen") {
             HomeScreen(
@@ -152,6 +152,10 @@ fun NavigationComponent(
 
         composable("BuyCouponScreen") {
             BuyCouponScreen(viewModel<BuyCouponScreenViewMode>())
+        }
+
+        composable(NavTarget.HistoryScreen.label) {
+            HistoryScreen(viewModel<HistoryScreenViewModel>())
         }
 
 //        composable("dial") {

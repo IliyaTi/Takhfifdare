@@ -230,12 +230,12 @@ fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic:
         Spacer(modifier = Modifier.height(5.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            Button(onClick = {
-                /*TODO*/
-            }) {
-                Text(text = "خرید با امتیاز", color = Color.White)
-            }
-            Spacer(modifier = Modifier.width(10.dp))
+//            Button(onClick = {
+//                /*TODO*/
+//            }) {
+//                Text(text = "خرید با امتیاز", color = Color.White)
+//            }
+//            Spacer(modifier = Modifier.width(10.dp))
             Button(onClick = {
                 viewModel.proceedToGateway(
                     price = price.toString(),

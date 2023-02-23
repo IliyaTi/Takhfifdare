@@ -1,7 +1,6 @@
 package com.example.takhfifdar.screens.viewmodels
 
 import android.app.Application
-import android.util.Log
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.AndroidViewModel
@@ -39,6 +38,19 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                 if (req.isSuccessful) {
                     TakhfifdareApplication.loggedInUser.value!!.credit = req.body()?.user?.credit ?: "0"
                     database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value!!)
+
+                    // TODO: Transactions not right yet // just for testing purposes
+//                    database.TransactionDao().insert(
+//                        Transaction(
+//                            billSerial = Random.nextInt(from = 100000, until = 999999).toString(),
+//                            vendorPhone = "123456789",
+//                            vendorName = req.body()!!.storeName,
+//                            date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
+//                            customerName = TakhfifdareApplication.loggedInUser.value!!.first_name + " " + TakhfifdareApplication.loggedInUser.value!!.last_name,
+//                            discountPercent = req.body()!!.discount
+//                        )
+//                    )
+
                     Navigator.navigateTo(
                         navTarget = NavTarget.FeedbackScreen,
                         args = vendorObj.toString() + "~" + req.body()?.storeImage?.replace("/", "*") + "~" + req.body()?.discount

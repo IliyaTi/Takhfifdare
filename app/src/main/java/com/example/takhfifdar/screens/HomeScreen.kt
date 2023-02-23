@@ -79,7 +79,8 @@ fun HomeScreen(
             if (user.await().isSuccessful) {
                 TakhfifdareApplication.loggedInUser.value = user.await().body()
             } else {
-                TakhfifdareApplication.loggedInUser.value = TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
+                TakhfifdareApplication.loggedInUser.value =
+                    TakhfifdarDatabase.getDatabase(context).UserDao().getUser()
             }
         }
 
@@ -87,7 +88,7 @@ fun HomeScreen(
 
     BackdropScaffold(
         scaffoldState = backdropState,
-        peekHeight = BackdropScaffoldDefaults.PeekHeight + 40.dp,
+        peekHeight = if (TakhfifdareApplication.loggedInUser.value != null) BackdropScaffoldDefaults.PeekHeight + 40.dp else BackdropScaffoldDefaults.PeekHeight,
         appBar = {
             TopAppBar(
                 backgroundColor = Color.Transparent,
@@ -101,7 +102,7 @@ fun HomeScreen(
                         )
                     )
                     .fillMaxWidth()
-                    .height(BackdropScaffoldDefaults.PeekHeight + 40.dp)
+                    .height(if (TakhfifdareApplication.loggedInUser.value != null) BackdropScaffoldDefaults.PeekHeight + 40.dp else BackdropScaffoldDefaults.PeekHeight)
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {
                     Row(
@@ -136,45 +137,47 @@ fun HomeScreen(
                                 color = Color.White
                             )
                         }
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-                            Row(verticalAlignment = Alignment.CenterVertically, modifier = Modifier.padding(horizontal = 10.dp)) {
-                                Text(text = "امتیاز شما :", color = Color.White)
-                                Spacer(modifier = Modifier.width(10.dp))
-                                //TODO
-//                                Text(text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value!!.score.toString()), color = Color.White)
+                        if (TakhfifdareApplication.loggedInUser.value != null)
+                            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                                Row(
+                                    verticalAlignment = Alignment.CenterVertically,
+                                    modifier = Modifier.padding(horizontal = 10.dp)
+                                ) {
+                                    Text(text = "امتیاز شما :", color = Color.White)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value!!.score.toString()), color = Color.White)
+                                }
                             }
-                        }
                     }
-                    Row(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(40.dp)
-                            .padding(horizontal = 10.dp),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Row {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = "")
-                            Spacer(modifier = Modifier.width(4.dp))
-                            Text(
-                                text = TakhfifdareApplication.loggedInUser.value?.name ?: "کاربر",
-                                color = Color.White
-                            )
-                        }
-                        CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                    if (TakhfifdareApplication.loggedInUser.value != null)
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(40.dp)
+                                .padding(horizontal = 10.dp),
+                            horizontalArrangement = Arrangement.SpaceBetween,
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
                             Row {
-                                Text("اعتبار شما :", color = Color.White)
-                                Spacer(modifier = Modifier.width(10.dp))
+                                Icon(imageVector = Icons.Default.Person, contentDescription = "")
+                                Spacer(modifier = Modifier.width(4.dp))
                                 Text(
-                                    text =
-                                    if (TakhfifdareApplication.loggedInUser.value != null)
-                                        NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value?.credit!!)
-                                    else "0",
+                                    text = TakhfifdareApplication.loggedInUser.value?.name
+                                        ?: "کاربر",
                                     color = Color.White
                                 )
                             }
+                            CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
+                                Row {
+                                    Text("اعتبار شما :", color = Color.White)
+                                    Spacer(modifier = Modifier.width(10.dp))
+                                    Text(
+                                        text = NumberUnicodeAdapter().convert(TakhfifdareApplication.loggedInUser.value?.credit!!),
+                                        color = Color.White
+                                    )
+                                }
+                            }
                         }
-                    }
                 }
 
             }
@@ -219,6 +222,10 @@ fun HomeScreen(
                 )
                 context.startActivity(intent)
             }
+            // TODO: History needs cocking
+//            BackdropMenuItem(title = "تاریخچه", icon = Icons.Default.History) {
+//                Navigator.navigateTo(NavTarget.HistoryScreen)
+//            }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
                     launchSingleTop = true
@@ -373,7 +380,7 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                             .height(60.dp)
                             .fillMaxWidth(.7f),
                         value = viewModel.storeSerial.value,
-                        onValueChange = {viewModel.storeSerial.value = it},
+                        onValueChange = { viewModel.storeSerial.value = it },
                         shape = RoundedCornerShape(20.dp),
                         keyboardOptions = KeyboardOptions.Default.copy(keyboardType = KeyboardType.Decimal),
                         label = {
@@ -389,7 +396,12 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
                         if (viewModel.serialLoading.value)
                             CircularProgressIndicator(color = Color.Black, strokeWidth = 2.dp)
                         else
-                            Text(text = "ثبت", color = Color.Black, fontWeight = FontWeight.W900, fontSize = 18.sp)
+                            Text(
+                                text = "ثبت",
+                                color = Color.Black,
+                                fontWeight = FontWeight.W900,
+                                fontSize = 18.sp
+                            )
                     }
                 }
             }
