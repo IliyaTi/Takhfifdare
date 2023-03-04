@@ -8,12 +8,12 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [User::class, Token::class], version = 4, exportSchema = false)
+@Database(entities = [User::class, Token::class, Transaction::class], version = 4, exportSchema = false)
 abstract class TakhfifdarDatabase: RoomDatabase() {
 
     abstract fun UserDao(): UserDao
     abstract fun TokenDao(): TokenDao
-//    abstract fun TransactionDao(): TransactionDao
+    abstract fun TransactionDao(): TransactionDao
 
     companion object {
         @Volatile
@@ -26,11 +26,11 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
                 database.execSQL("ALTER TABLE user_table ADD COLUMN score INTEGER;")
             }
         }
-//        val migration4to5 = object : Migration(4, 5) {
-//            override fun migrate(database: SupportSQLiteDatabase) {
-//                TODO("Not yet implemented")
-//            }
-//        }
+        val migration4to5 = object : Migration(4, 5) {
+            override fun migrate(database: SupportSQLiteDatabase) {
+                TODO("Not yet implemented")
+            }
+        }
 
 
 

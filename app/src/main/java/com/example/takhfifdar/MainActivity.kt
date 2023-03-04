@@ -3,6 +3,7 @@ package com.example.takhfifdar
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.ManagedActivityResultLauncher
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -35,7 +36,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import androidx.navigation.navDeepLink
-import androidx.test.core.app.launchActivity
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.navigation.NavTarget
 import com.example.takhfifdar.navigation.Navigator
@@ -141,7 +141,7 @@ fun NavigationComponent(
         }
 
         composable("LoginScreen") {
-            LoginScreen(viewModel<LoginScreenViewModel>(), activity)
+            LoginScreen(viewModel(factory = LoginScreenViewModelFactory(activity)), activity)
         }
 
         composable("SplashScreen") {
@@ -154,9 +154,9 @@ fun NavigationComponent(
             BuyCouponScreen(viewModel<BuyCouponScreenViewMode>())
         }
 
-        composable(NavTarget.HistoryScreen.label) {
-            HistoryScreen(viewModel<HistoryScreenViewModel>())
-        }
+//        composable(NavTarget.HistoryScreen.label) {
+//            HistoryScreen(viewModel<HistoryScreenViewModel>())
+//        }
 
 //        composable("dial") {
 //            UpdateDialog()

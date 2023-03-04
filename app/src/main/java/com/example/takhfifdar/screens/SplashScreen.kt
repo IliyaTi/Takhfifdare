@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material.Icon
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
@@ -44,6 +45,17 @@ fun SplashScreen(database: TakhfifdarDatabase, versionDialog: @Composable () -> 
 
     Image(painter = painterResource(id = R.drawable.splash), contentDescription = "", modifier = Modifier.fillMaxSize(), contentScale = ContentScale.FillBounds)
 
+    Column(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+
+        }
+        Box(modifier = Modifier.weight(1f).fillMaxWidth()) {
+
+        }
+        Box(modifier = Modifier.weight(1f).fillMaxWidth(), contentAlignment =  Alignment.Center) {
+            CircularProgressIndicator(color = Color.White)
+        }
+    }
 
     if (state.value == Connection.ConnectionState.Available) {
         LaunchedEffect(showUpdateDialog.value) {

@@ -199,9 +199,9 @@ fun HomeScreen(
                 BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
                     Navigator.navigateTo(NavTarget.FillUserDataScreen)
                 }
-                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.ShoppingCart) {
-                    Navigator.navigateTo(NavTarget.BuyCouponScreen)
-                }
+//                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.ShoppingCart) {
+//                    Navigator.navigateTo(NavTarget.BuyCouponScreen)
+//                }
                 BackdropMenuItem(title = "فروشگاه ها", icon = Icons.Default.Storefront) {
 
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/"))
@@ -293,13 +293,6 @@ val mainSet = ConstraintSet {
 
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {
-
-    Image(
-        painter = painterResource(id = R.drawable.bg),
-        contentDescription = "",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
 
     ConstraintLayout(mainSet, modifier = Modifier.fillMaxSize()) {
 
@@ -416,4 +409,12 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
             contentScale = ContentScale.FillWidth
         )
     }
+
+    Image(
+        painter = painterResource(id = R.drawable.bg),
+        contentDescription = "",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
+
 }

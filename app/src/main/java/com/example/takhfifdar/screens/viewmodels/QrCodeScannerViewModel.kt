@@ -7,6 +7,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
+import com.example.takhfifdar.data.repositories.local.database.Transaction
 import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
 import com.example.takhfifdar.data.repositories.remote.network.objects.QrBody
 import com.example.takhfifdar.navigation.NavTarget
@@ -15,6 +16,9 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import org.json.JSONObject
 import java.net.SocketTimeoutException
+import java.text.SimpleDateFormat
+import java.util.*
+import kotlin.random.Random
 
 class QrCodeScannerViewModel(application: Application) : AndroidViewModel(application) {
 
@@ -40,16 +44,16 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                     database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value!!)
 
                     // TODO: Transactions not right yet // just for testing purposes
-//                    database.TransactionDao().insert(
-//                        Transaction(
-//                            billSerial = Random.nextInt(from = 100000, until = 999999).toString(),
-//                            vendorPhone = "123456789",
-//                            vendorName = req.body()!!.storeName,
-//                            date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
-//                            customerName = TakhfifdareApplication.loggedInUser.value!!.first_name + " " + TakhfifdareApplication.loggedInUser.value!!.last_name,
-//                            discountPercent = req.body()!!.discount
-//                        )
-//                    )
+                    database.TransactionDao().insert(
+                        Transaction(
+                            billSerial = Random.nextInt(from = 100000, until = 999999).toString(),
+                            vendorPhone = "123456789",
+                            vendorName = req.body()!!.storeName,
+                            date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
+                            customerName = TakhfifdareApplication.loggedInUser.value!!.first_name + " " + TakhfifdareApplication.loggedInUser.value!!.last_name,
+                            discountPercent = req.body()!!.discount
+                        )
+                    )
 
                     Navigator.navigateTo(
                         navTarget = NavTarget.FeedbackScreen,
