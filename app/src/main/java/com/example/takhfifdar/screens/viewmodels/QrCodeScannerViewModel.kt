@@ -50,7 +50,8 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                             vendorPhone = "123456789",
                             vendorName = req.body()!!.storeName,
                             date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
-                            customerName = TakhfifdareApplication.loggedInUser.value!!.first_name + " " + TakhfifdareApplication.loggedInUser.value!!.last_name,
+                            customer_first = TakhfifdareApplication.loggedInUser.value!!.first_name!!,
+                            customer_last = TakhfifdareApplication.loggedInUser.value!!.last_name!!,
                             discountPercent = req.body()!!.discount
                         )
                     )

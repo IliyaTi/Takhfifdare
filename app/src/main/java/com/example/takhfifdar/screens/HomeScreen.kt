@@ -199,9 +199,9 @@ fun HomeScreen(
                 BackdropMenuItem(title = "ویرایش اطلاعات", icon = Icons.Filled.Settings) {
                     Navigator.navigateTo(NavTarget.FillUserDataScreen)
                 }
-//                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.ShoppingCart) {
-//                    Navigator.navigateTo(NavTarget.BuyCouponScreen)
-//                }
+                BackdropMenuItem(title = "خرید کوپن", icon = Icons.Default.ShoppingCart) {
+                    Navigator.navigateTo(NavTarget.BuyCouponScreen)
+                }
                 BackdropMenuItem(title = "فروشگاه ها", icon = Icons.Default.Storefront) {
 
                     val intent = Intent(Intent.ACTION_VIEW, Uri.parse("https://takhfifdare.com/"))
@@ -222,10 +222,6 @@ fun HomeScreen(
                 )
                 context.startActivity(intent)
             }
-            // TODO: History needs cocking
-//            BackdropMenuItem(title = "تاریخچه", icon = Icons.Default.History) {
-//                Navigator.navigateTo(NavTarget.HistoryScreen)
-//            }
             BackdropMenuItem(title = "درباره ما", icon = Icons.Filled.ContactSupport) {
                 homeScreenNavController.navigate("aboutUs") {
                     launchSingleTop = true
@@ -268,7 +264,7 @@ val mainSet = ConstraintSet {
     val lottie = createRefFor("lottie")
     val bg = createRefFor("bg")
     val container = createRefFor("container")
-
+    val fab = createRefFor("fab")
 
     constrain(lottie) {
         top.linkTo(parent.top, (-20).dp)
@@ -288,11 +284,23 @@ val mainSet = ConstraintSet {
         end.linkTo(parent.end)
     }
 
+    constrain(fab) {
+        end.linkTo(parent.end)
+        bottom.linkTo(parent.bottom)
+    }
+
 }
 
 
 @Composable
 fun TapToScan(viewModel: HomeScreenViewModel) {
+
+    Image(
+        painter = painterResource(id = R.drawable.bg),
+        contentDescription = "",
+        modifier = Modifier.fillMaxSize(),
+        contentScale = ContentScale.Crop
+    )
 
     ConstraintLayout(mainSet, modifier = Modifier.fillMaxSize()) {
 
@@ -410,11 +418,6 @@ fun TapToScan(viewModel: HomeScreenViewModel) {
         )
     }
 
-    Image(
-        painter = painterResource(id = R.drawable.bg),
-        contentDescription = "",
-        modifier = Modifier.fillMaxSize(),
-        contentScale = ContentScale.Crop
-    )
+
 
 }

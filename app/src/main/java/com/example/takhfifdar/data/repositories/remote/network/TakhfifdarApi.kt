@@ -56,5 +56,9 @@ interface TakhfifdarApi {
     @POST("api/api/invite-code")
     suspend fun inviteCode(@Header("Authorization") token: String, @Body body: InviteCodeBody): Response<InviteCodeResponse>
 
+    @Headers("Accept: application/json")
+    @POST("api/api/Score")
+    suspend fun buyByScore(body: BuyByScoreBody): Response<BuyByScoreResponse>
+
 
 }

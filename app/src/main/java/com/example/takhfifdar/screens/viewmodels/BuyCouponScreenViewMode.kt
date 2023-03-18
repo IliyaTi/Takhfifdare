@@ -14,6 +14,7 @@ import androidx.lifecycle.viewModelScope
 import com.example.takhfifdar.TakhfifdareApplication
 import com.example.takhfifdar.data.repositories.local.database.TakhfifdarDatabase
 import com.example.takhfifdar.data.repositories.remote.network.RetrofitInstance
+import com.example.takhfifdar.data.repositories.remote.network.objects.BuyByScoreBody
 import com.example.takhfifdar.data.repositories.remote.network.objects.DiscountBody
 import com.example.takhfifdar.util.NumberUnicodeAdapter
 import kotlinx.coroutines.launch
@@ -49,6 +50,18 @@ class BuyCouponScreenViewMode(application: Application) : AndroidViewModel(appli
                     discountStatus.value = ""
                     discountCodeLoading.value = false
                 }
+            }
+        }
+    }
+
+    fun buyByScore(price: Int) {
+        viewModelScope.launch {
+            val res = RetrofitInstance.api.buyByScore(BuyByScoreBody(TakhfifdareApplication.loggedInUser.value!!.id, price))
+            if (res.isSuccessful) {
+                 with(TakhfifdareApplication.loggedInUser.value!!) {
+                     credit = res.body()!!.credit.toString()
+                     score = res.body()!!.score
+                 }
             }
         }
     }

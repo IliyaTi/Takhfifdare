@@ -1,6 +1,7 @@
 package com.example.takhfifdar.screens
 
 import android.app.Activity
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -47,13 +48,18 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .verticalScroll(scrollState), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center
+            .verticalScroll(scrollState),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
     ) {
 
         Spacer(modifier = Modifier.height(20.dp))
 
         CompositionLocalProvider(LocalLayoutDirection provides LayoutDirection.Rtl) {
-            Row(modifier = Modifier.fillMaxWidth(.8f), verticalAlignment = Alignment.CenterVertically) {
+            Row(
+                modifier = Modifier.fillMaxWidth(.8f),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
                 OutlinedTextField(
                     modifier = Modifier.weight(3f),
                     value = viewModel.discountCode.value,
@@ -67,7 +73,8 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
                     },
                     modifier = Modifier
                         .weight(1f)
-                        .height(IntrinsicSize.Max)) {
+                        .height(IntrinsicSize.Max)
+                ) {
                     if (viewModel.discountCodeLoading.value) {
                         CircularProgressIndicator(color = Color.White)
                     } else {
@@ -77,7 +84,7 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             }
             Text(text = viewModel.discountStatus.value, color = Color(0xFF059700))
         }
-        
+
 
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -88,7 +95,8 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             username = viewModel.fullName,
             pic = R.drawable.card_00,
             discount = viewModel.discountPercentage.value,
-            viewModel = viewModel
+            viewModel = viewModel,
+            priceInScores = 200
         )
         CouponCard(
             context = context,
@@ -97,7 +105,8 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             username = viewModel.fullName,
             pic = R.drawable.card_03,
             discount = viewModel.discountPercentage.value,
-            viewModel = viewModel
+            viewModel = viewModel,
+            priceInScores = 750
         )
         CouponCard(
             context = context,
@@ -106,7 +115,8 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             username = viewModel.fullName,
             pic = R.drawable.card_02,
             discount = viewModel.discountPercentage.value,
-            viewModel = viewModel
+            viewModel = viewModel,
+            priceInScores = 1500
         )
         CouponCard(
             context = context,
@@ -115,16 +125,26 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             username = viewModel.fullName,
             pic = R.drawable.card_01,
             discount = viewModel.discountPercentage.value,
-            viewModel = viewModel
+            viewModel = viewModel,
+            priceInScores = 2250
         )
     }
 
 }
 
 @Composable
-fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic: Int, discount: Int, viewModel: BuyCouponScreenViewMode) {
+fun CouponCard(
+    context: Activity,
+    value: Int,
+    count: Int,
+    username: String,
+    pic: Int,
+    discount: Int,
+    viewModel: BuyCouponScreenViewMode,
+    priceInScores: Int
+) {
 
-    val price = value - (value/100)*discount
+    val price = value - (value / 100) * discount
 
     val set = ConstraintSet {
         val image = createRefFor("image")
@@ -197,7 +217,9 @@ fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic:
                         text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(value)),
                         fontSize = 18.sp,
                         color = if (discount == 0) Color.White else Color.Red,
-                        style = if (discount != 0) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle(textDecoration = TextDecoration.None) ,
+                        style = if (discount != 0) TextStyle(textDecoration = TextDecoration.LineThrough) else TextStyle(
+                            textDecoration = TextDecoration.None
+                        ),
                         fontWeight = FontWeight.W500
                     )
                     Text(
@@ -209,7 +231,13 @@ fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic:
                 }
 
                 if (discount != 0)
-                    Text(text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(price)), modifier = Modifier.layoutId("newOffer"), color = Color.White, fontWeight = FontWeight.Bold, fontSize = 18.sp)
+                    Text(
+                        text = NumberUnicodeAdapter().convert(NumberUnicodeAdapter().format(price)),
+                        modifier = Modifier.layoutId("newOffer"),
+                        color = Color.White,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 18.sp
+                    )
 
                 Column(
                     modifier = Modifier.layoutId("count"),
@@ -230,12 +258,13 @@ fun CouponCard(context: Activity, value: Int, count: Int, username: String, pic:
         Spacer(modifier = Modifier.height(5.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-//            Button(onClick = {
-//                /*TODO*/
-//            }) {
-//                Text(text = "خرید با امتیاز", color = Color.White)
-//            }
-//            Spacer(modifier = Modifier.width(10.dp))
+            Button(onClick = {
+                if (TakhfifdareApplication.loggedInUser.value?.score!! < priceInScores) return@Button
+                viewModel.buyByScore()
+            }) {
+                Text(text = "خرید با ${NumberUnicodeAdapter().convert(priceInScores.toString())} امتیاز", color = Color.White)
+            }
+            Spacer(modifier = Modifier.width(10.dp))
             Button(onClick = {
                 viewModel.proceedToGateway(
                     price = price.toString(),

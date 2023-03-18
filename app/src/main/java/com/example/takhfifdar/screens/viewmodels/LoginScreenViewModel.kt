@@ -88,6 +88,7 @@ class LoginScreenViewModel(val activity: Activity): ViewModel() {
         smsReceiver?.setOTPListener(object : OTPReceiveListener {
             override fun onOTPReceived(otp: String?) {
                 this@LoginScreenViewModel.otp.value = otp ?: ""
+                confirmCode()
             }
         })
     }

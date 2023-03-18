@@ -8,7 +8,7 @@ import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 
 
-@Database(entities = [User::class, Token::class, Transaction::class], version = 4, exportSchema = false)
+@Database(entities = [User::class, Token::class, Transaction::class], version = 5, exportSchema = false)
 abstract class TakhfifdarDatabase: RoomDatabase() {
 
     abstract fun UserDao(): UserDao
@@ -29,6 +29,7 @@ abstract class TakhfifdarDatabase: RoomDatabase() {
         val migration4to5 = object : Migration(4, 5) {
             override fun migrate(database: SupportSQLiteDatabase) {
                 TODO("Not yet implemented")
+                database.execSQL("CREATE TABLE 'transaction_history' ()")
             }
         }
 
