@@ -14,7 +14,7 @@
         android:icon="@mipmap/appicon"
         android:label="@string/app_name"
         android:roundIcon="@mipmap/appicon"
-        android:supportsRtl="true"
+        android:supportsRtl="false"
         android:theme="@style/Theme.Takhfifdar"
 
         tools:targetApi="31">

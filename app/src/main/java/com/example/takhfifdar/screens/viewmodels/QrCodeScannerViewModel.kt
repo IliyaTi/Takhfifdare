@@ -44,17 +44,17 @@ class QrCodeScannerViewModel(application: Application) : AndroidViewModel(applic
                     database.UserDao().updateUser(TakhfifdareApplication.loggedInUser.value!!)
 
                     // TODO: Transactions not right yet // just for testing purposes
-                    database.TransactionDao().insert(
-                        Transaction(
-                            billSerial = Random.nextInt(from = 100000, until = 999999).toString(),
-                            vendorPhone = "123456789",
-                            vendorName = req.body()!!.storeName,
-                            date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
-                            customer_first = TakhfifdareApplication.loggedInUser.value!!.first_name!!,
-                            customer_last = TakhfifdareApplication.loggedInUser.value!!.last_name!!,
-                            discountPercent = req.body()!!.discount
-                        )
-                    )
+//                    database.TransactionDao().insert(
+//                        Transaction(
+//                            billSerial = Random.nextInt(from = 100000, until = 999999).toString(),
+//                            vendorPhone = "123456789",
+//                            vendorName = req.body()!!.storeName,
+//                            date = SimpleDateFormat("MM/dd/yyyy").format(Calendar.getInstance().time),
+//                            customer_first = TakhfifdareApplication.loggedInUser.value!!.first_name!!,
+//                            customer_last = TakhfifdareApplication.loggedInUser.value!!.last_name!!,
+//                            discountPercent = req.body()!!.discount
+//                        )
+//                    )
 
                     Navigator.navigateTo(
                         navTarget = NavTarget.FeedbackScreen,

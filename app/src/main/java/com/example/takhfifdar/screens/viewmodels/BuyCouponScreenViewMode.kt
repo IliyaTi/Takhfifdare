@@ -4,11 +4,8 @@ import android.app.Activity
 import android.app.Application
 import android.content.Intent
 import android.net.Uri
-import android.os.Bundle
-import android.provider.Browser
 import android.widget.Toast
 import androidx.compose.runtime.mutableStateOf
-import androidx.core.net.toUri
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.takhfifdar.TakhfifdareApplication

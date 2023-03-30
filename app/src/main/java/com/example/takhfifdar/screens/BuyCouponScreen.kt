@@ -88,32 +88,22 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
 
 
         Spacer(modifier = Modifier.height(20.dp))
-        CouponCard(
-            context = context,
-            value = 12000,
-            count = 1,
-            username = viewModel.fullName,
-            pic = R.drawable.card_00,
-            discount = viewModel.discountPercentage.value,
-            viewModel = viewModel,
-            priceInScores = 200
-        )
-        CouponCard(
-            context = context,
-            value = 55000,
-            count = 5,
-            username = viewModel.fullName,
-            pic = R.drawable.card_03,
-            discount = viewModel.discountPercentage.value,
-            viewModel = viewModel,
-            priceInScores = 750
-        )
+//        CouponCard(
+//            context = context,
+//            value = 12000,
+//            count = 1,
+//            username = viewModel.fullName,
+//            pic = R.drawable.card_00,
+//            discount = viewModel.discountPercentage.value,
+//            viewModel = viewModel,
+//            priceInScores = 200
+//        )
         CouponCard(
             context = context,
             value = 100000,
             count = 10,
             username = viewModel.fullName,
-            pic = R.drawable.card_02,
+            pic = R.drawable.card_03,
             discount = viewModel.discountPercentage.value,
             viewModel = viewModel,
             priceInScores = 1500
@@ -123,10 +113,20 @@ fun BuyCouponScreen(viewModel: BuyCouponScreenViewMode) {
             value = 140000,
             count = 15,
             username = viewModel.fullName,
-            pic = R.drawable.card_01,
+            pic = R.drawable.card_02,
             discount = viewModel.discountPercentage.value,
             viewModel = viewModel,
             priceInScores = 2250
+        )
+        CouponCard(
+            context = context,
+            value = 270000,
+            count = 30,
+            username = viewModel.fullName,
+            pic = R.drawable.card_01,
+            discount = viewModel.discountPercentage.value,
+            viewModel = viewModel,
+            priceInScores = 4500
         )
     }
 
@@ -258,12 +258,13 @@ fun CouponCard(
         Spacer(modifier = Modifier.height(5.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
 
-            Button(onClick = {
-                if (TakhfifdareApplication.loggedInUser.value?.score!! < priceInScores) return@Button
-                viewModel.buyByScore()
-            }) {
-                Text(text = "خرید با ${NumberUnicodeAdapter().convert(priceInScores.toString())} امتیاز", color = Color.White)
-            }
+//            Button(onClick = {
+//                if (TakhfifdareApplication.loggedInUser.value?.score!! < priceInScores) return@Button
+//                //  TODO
+////                viewModel.buyByScore()
+//            }) {
+//                Text(text = "خرید با ${NumberUnicodeAdapter().convert(priceInScores.toString())} امتیاز", color = Color.White)
+//            }
             Spacer(modifier = Modifier.width(10.dp))
             Button(onClick = {
                 viewModel.proceedToGateway(

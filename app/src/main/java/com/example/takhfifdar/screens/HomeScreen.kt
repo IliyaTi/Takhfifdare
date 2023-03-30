@@ -215,7 +215,7 @@ fun HomeScreen(
                 )
                 context.startActivity(intent)
             }
-            BackdropMenuItem(title = "بازاریابان", icon = Icons.Default.MonetizationOn) {
+            BackdropMenuItem(title = "کسب و کار", icon = Icons.Default.MonetizationOn) {
                 val intent = Intent(
                     Intent.ACTION_VIEW,
                     Uri.parse("https://marketer.takhfifdare.com/Register/index")
